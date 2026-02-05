@@ -1,0 +1,7 @@
+{
+  "name": "Pesona Banaran - KKN Kulon Progo",
+  "description": "Website promosi Desa Banaran, Galur, Kulon Progo yang menonjolkan konservasi mangrove, wisata air, dan produk UMKM lokal.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
