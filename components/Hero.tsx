@@ -9,9 +9,9 @@ const Hero: React.FC = () => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=2000" 
+          src="https://www.pesisir.net/wp-content/uploads/2022/05/Pantai-Glagah.jpg" 
           alt="Hutan Mangrove Banaran" 
-          className="w-full h-full object-cover brightness-[0.4] scale-105 animate-slow-zoom"
+          className="w-full h-full object-cover brightness-[0.4] scale-10 animate-slow-zoom"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/60 via-transparent to-emerald-950/90"></div>
       </div>

@@ -53,7 +53,7 @@ const BirdMigration: React.FC = () => {
               </h2>
 
               <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium mx-auto">
-                Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+                Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia dan Selandia Baru.
               </p>
           </div>
 
@@ -114,7 +114,7 @@ const BirdMigration: React.FC = () => {
 
             <div className="mt-20 pt-12 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-8">
                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center font-black animate-pulse shadow-lg shadow-sky-500/50">i</div>
+                  <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center font-black animate-pulse shadow-lg shadow-sky-500/50">i</div>
                   <p className="text-sky-200 text-sm font-bold uppercase tracking-wider">Lapor jika melihat aktivitas perburuan liar!</p>
                </div>
                <button className="bg-sky-400 hover:bg-white text-sky-950 px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-2xl">
