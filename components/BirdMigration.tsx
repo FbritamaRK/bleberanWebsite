@@ -47,7 +47,7 @@ const BirdMigration: React.FC = () => {
                 Kawasan Ekosistem Esensial (KEE)
               </span>
 
-              <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none mb-8">
+              <h2 id="bird-title" className="text-4xl md:text-Txl font-serif text-slate-900 leading-none mb-8">
                 Saksi Bisu <br/>
                 <span className="text-sky-700 italic">Lintas Benua</span>
               </h2>

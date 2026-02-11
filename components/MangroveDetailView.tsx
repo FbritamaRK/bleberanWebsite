@@ -16,21 +16,21 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
       scientific: 'Rhizophora apiculata',
       tag: 'Penahan Gelombang Utama',
       details: 'Memiliki akar tunjang yang kuat untuk menahan hantaman ombak besar. Di Bleberan, ini adalah spesies utama penahan abrasi.',
-      image: 'https://images.unsplash.com/photo-1596333522244-2db242738371?auto=format&fit=crop&q=80&w=800',
+      image: 'https://live.staticflickr.com/3244/3043163309_7ab1776a34_b.jpg',
     },
     {
       name: 'Api-api (Avicennia)',
       scientific: 'Avicennia marina',
       tag: 'Pionir Pesisir',
       details: 'Tumbuh di zona paling luar. Akar napasnya yang menyembul ke atas sangat efektif memerangkap sedimen lumpur.',
-      image: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=800',
+      image: 'https://blog-backup.lindungihutan.com/wp-content/uploads/2022/06/Pohon-Api-api-yang-Mampu-Hidup-di-Daerah-Pantai-dan-Pesisir-Design-Blog-LindungiHutan-768x576.jpg',
     },
     {
       name: 'Bogem (Sonneratia)',
       scientific: 'Sonneratia alba',
       tag: 'Penyeimbang Ekosistem',
       details: 'Memiliki buah yang dapat dikonsumsi dan menjadi habitat favorit bagi berbagai jenis burung migran di pesisir Banaran.',
-      image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&q=80&w=800',
+      image: 'https://th.bing.com/th/id/OIP.5QtGIQZWgD6W5HxljYVYDAHaFj?w=233&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3https://live.staticflickr.com/5819/30722535045_4985a81d75_b.jpg',
     }
   ];
 
@@ -120,7 +120,7 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
               </div>
               <div className="relative">
                  <div className="rounded-[4rem] overflow-hidden shadow-2xl h-[500px]">
-                    <img src="https://images.unsplash.com/photo-1540959733332-e94e1b3fe520?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover" alt="Ilustrasi Abrasi" />
+                    <img src="https://img.harianjogja.com/posts/2020/11/09/1054821/abrasi-trisik-ancam-tempat-konservasi.jpg" className="w-full h-full object-cover" alt="Ilustrasi Abrasi" />
                  </div>
               </div>
            </div>
@@ -133,7 +133,7 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
                  <div className="lg:w-1/2 order-2 lg:order-1">
                     <div className="grid grid-cols-2 gap-4">
                        <div className="space-y-4 translate-y-8">
-                          <img src="https://images.unsplash.com/photo-1596333522244-2db242738371?auto=format&fit=crop&q=80&w=600" className="rounded-3xl shadow-xl" alt="Mangrove 1" />
+                          <img src="https://visitingjogja.jogjaprov.go.id/en/wp-content/uploads/2020/11/hutan-mangrove-pantai-congot-2.jpg" className="rounded-3xl shadow-xl" alt="Mangrove 1" />
                           <div className="bg-emerald-600 p-8 rounded-3xl text-white shadow-xl">
                              <p className="font-black text-4xl mb-2">4x</p>
                              <p className="text-xs uppercase font-bold tracking-widest opacity-80">Lebih banyak serap karbon dibanding hutan darat.</p>
@@ -144,7 +144,7 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
                              <p className="font-black text-4xl mb-2">90%</p>
                              <p className="text-xs uppercase font-bold tracking-widest opacity-80">Energi gelombang diredam oleh akar mangrove.</p>
                           </div>
-                          <img src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=600" className="rounded-3xl shadow-xl" alt="Mangrove 2" />
+                          <img src="https://thumbs.dreamstime.com/b/wooden-stairs-sea-mangrove-tree-growing-old-wooden-stairs-water-small-mangrove-tree-growing-229694393.jpg" className="rounded-3xl shadow-xl" alt="Mangrove 2" />
                        </div>
                     </div>
                  </div>
