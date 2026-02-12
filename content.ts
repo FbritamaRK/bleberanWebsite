@@ -26,7 +26,7 @@ export const initialContent: SiteConfig = {
       tagline: 'Labirin Hijau Pesisir Selatan',
       description: 'Jelajahi jembatan bambu estetik di tengah rimbunnya hutan mangrove yang menenangkan.',
       fullDescription: 'Hutan Mangrove Wanatirta adalah mahakarya konservasi mandiri warga Dusun Bleberan. Dengan jembatan bambu sepanjang lebih dari 200 meter yang membelah hutan, Anda akan diajak masuk ke dalam ekosistem yang asri.',
-      imageUrl: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=800',
+      imageUrl: 'https://visitingjogja.jogjaprov.go.id/en/wp-content/uploads/2020/11/hutan-mangrove-pantai-congot-2.jpg',
       galleryImages: [
         'https://images.unsplash.com/photo-1596333522244-2db242738371?auto=format&fit=crop&q=80&w=1200'
       ],
@@ -42,7 +42,7 @@ export const initialContent: SiteConfig = {
       tagline: 'Simfoni Hilir Sungai Progo',
       description: 'Petualangan air menyusuri sungai menuju kemegahan Jembatan Kabanaran yang ikonik.',
       fullDescription: 'Nikmati perspektif berbeda dari keindahan Banaran melalui jalur sungai. Menggunakan perahu motor tradisional yang aman, Anda akan dibawa melintasi hilir Sungai Progo yang tenang menuju Jembatan Kabanaran.',
-      imageUrl: 'https://images.unsplash.com/photo-1540959733332-e94e1b3fe520?auto=format&fit=crop&q=80&w=800',
+      imageUrl: 'https://blog.amikom.ac.id/wp-content/uploads/2025/08/Jalur-Selatan-Jembatan-Pandansimo-Beroperasi.jpg',
       galleryImages: [
         'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&q=80&w=1200'
       ],
@@ -58,7 +58,7 @@ export const initialContent: SiteConfig = {
       tagline: 'Malam Syahdu di Tepi Sungai',
       description: 'Rasakan kedamaian bermalam di bawah bintang-bintang dengan udara pesisir yang sejuk.',
       fullDescription: 'Lepaskan penat dari hiruk-pikuk kota dengan berkemah di tepi sungai Banaran. Area camping kami menawarkan tanah lapang yang rata dengan rumput hijau dan akses mudah ke fasilitas air bersih.',
-      imageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=800',
+      imageUrl: 'https://visitingjogja.jogjaprov.go.id/wp-content/uploads/2022/11/Waduk-Sermo-Kulon-Progo.jpg',
       galleryImages: [
         'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=1200'
       ],
@@ -74,7 +74,7 @@ export const initialContent: SiteConfig = {
       id: '1',
       name: 'Jadah Gurih Bleberan',
       description: 'Ketan pilihan dengan parutan kelapa muda, disajikan hangat.',
-      imageUrl: 'https://images.unsplash.com/photo-1596797038530-2c39bb8ed2b1?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://asset-2.tstatic.net/tribunjogjawiki/foto/bank/images/jadah-tempe-carik.jpg',
       priceRange: 'Rp 10.000 - 45.000',
       whatsapp: '6281234567890'
     },
@@ -82,7 +82,7 @@ export const initialContent: SiteConfig = {
       id: '2',
       name: 'Peyek Udang & Wader',
       description: 'Camilan renyah hasil tangkapan segar nelayan lokal.',
-      imageUrl: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://cnc-magazine.oramiland.com/parenting/original_images/Resep_Peyek_Udang.jpg',
       priceRange: 'Rp 15.000 - 35.000',
       whatsapp: '6281234567890'
     }
