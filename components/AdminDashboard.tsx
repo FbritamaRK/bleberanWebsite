@@ -105,7 +105,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
   const startCreate = () => {
     const id = Date.now().toString();
-    if (activeTab === 'attractions') setEditingItem({ id, title: '', tagline: '', description: '', fullDescription: '', imageUrl: '', features: [], tips: [], category: 'Ekowisata', bestTime: '', galleryImages: [] });
+    if (activeTab === 'attractions') setEditingItem({ id, title: '', tagline: '', description: '', fullDescription: '', imageUrl: '', features: [], tips: [], category: 'Ekowisata', bestTime: '', galleryImages: [], price: '' });
     if (activeTab === 'umkm') setEditingItem({ id, name: '', description: '', imageUrl: '', priceRange: '', whatsapp: '' });
     if (activeTab === 'birds') setEditingItem({ id, name: '', scientific: '', status: '', desc: '', image: '' });
   };
@@ -336,54 +336,128 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   required
                 />
 
-                {/* GALERI VISUAL - Hanya Muncul jika Tab Wisata Aktif */}
+                {/* MODAL FIELDS UNTUK WISATA */}
                 {activeTab === 'attractions' && (
-                  <div className="mt-8 pt-8 border-t border-white/5">
-                    <div className="flex justify-between items-center mb-6">
-                      <h4 className="text-sm font-black uppercase tracking-widest text-emerald-500">Galeri Visual Destinasi</h4>
-                      <button 
-                        type="button" 
-                        onClick={handleAddGalleryImage}
-                        className="text-[10px] font-black uppercase tracking-widest bg-emerald-600/10 text-emerald-500 px-4 py-2 rounded-xl border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all"
-                      >
-                        + Tambah Gambar Galeri
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      {(editingItem.galleryImages || []).map((imgUrl: string, idx: number) => (
-                        <div key={idx} className="flex gap-3">
-                          <input 
-                            className="flex-1 bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" 
-                            value={imgUrl} 
-                            placeholder={`URL Gambar Galeri #${idx + 1}`}
-                            onChange={e => handleUpdateGalleryImage(idx, e.target.value)}
-                          />
-                          <button 
-                            type="button" 
-                            onClick={() => handleRemoveGalleryImage(idx)}
-                            className="w-14 h-14 bg-rose-900/20 text-rose-500 border border-rose-500/20 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      ))}
-                      {(editingItem.galleryImages || []).length === 0 && (
-                        <p className="text-center text-slate-600 text-[10px] font-bold uppercase tracking-widest py-4 border-2 border-dashed border-white/5 rounded-2xl">Galeri masih kosong</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'umkm' && (
                   <>
-                    <label className="block text-xs font-bold text-slate-500 uppercase">No. WhatsApp (628xxx)</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Kategori Wisata</label>
+                        <select 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
+                          value={editingItem.category}
+                          onChange={e => setEditingItem({...editingItem, category: e.target.value})}
+                        >
+                          <option value="Ekowisata">Ekowisata</option>
+                          <option value="Petualangan">Petualangan</option>
+                          <option value="Rekreasi">Rekreasi</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Estimasi Biaya</label>
+                        <input 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
+                          value={editingItem.price} 
+                          placeholder="Rp 10.000 / orang"
+                          onChange={e => setEditingItem({...editingItem, price: e.target.value})} 
+                        />
+                      </div>
+                    </div>
+
+                    <label className="block text-xs font-bold text-slate-500 uppercase">Waktu Terbaik</label>
                     <input 
                       className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                      value={editingItem.whatsapp} 
-                      onChange={e => setEditingItem({...editingItem, whatsapp: e.target.value})} 
-                      required
+                      value={editingItem.bestTime} 
+                      placeholder="07:30 - 09:30 WIB"
+                      onChange={e => setEditingItem({...editingItem, bestTime: e.target.value})} 
                     />
+
+                    <div className="mt-8 pt-8 border-t border-white/5">
+                      <div className="flex justify-between items-center mb-6">
+                        <h4 className="text-sm font-black uppercase tracking-widest text-emerald-500">Galeri Visual Destinasi</h4>
+                        <button 
+                          type="button" 
+                          onClick={handleAddGalleryImage}
+                          className="text-[10px] font-black uppercase tracking-widest bg-emerald-600/10 text-emerald-500 px-4 py-2 rounded-xl border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all"
+                        >
+                          + Tambah Gambar Galeri
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        {(editingItem.galleryImages || []).map((imgUrl: string, idx: number) => (
+                          <div key={idx} className="flex gap-3">
+                            <input 
+                              className="flex-1 bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" 
+                              value={imgUrl} 
+                              placeholder={`URL Gambar Galeri #${idx + 1}`}
+                              onChange={e => handleUpdateGalleryImage(idx, e.target.value)}
+                            />
+                            <button 
+                              type="button" 
+                              onClick={() => handleRemoveGalleryImage(idx)}
+                              className="w-14 h-14 bg-rose-900/20 text-rose-500 border border-rose-500/20 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        ))}
+                        {(editingItem.galleryImages || []).length === 0 && (
+                          <p className="text-center text-slate-600 text-[10px] font-bold uppercase tracking-widest py-4 border-2 border-dashed border-white/5 rounded-2xl">Galeri masih kosong</p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* MODAL FIELDS UNTUK UMKM */}
+                {activeTab === 'umkm' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Rentang Harga</label>
+                        <input 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
+                          value={editingItem.priceRange} 
+                          placeholder="Rp 10.000 - 50.000"
+                          onChange={e => setEditingItem({...editingItem, priceRange: e.target.value})} 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">WhatsApp Penjual (628xxx)</label>
+                        <input 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
+                          value={editingItem.whatsapp} 
+                          onChange={e => setEditingItem({...editingItem, whatsapp: e.target.value})} 
+                          required
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* MODAL FIELDS UNTUK BURUNG */}
+                {activeTab === 'birds' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Latin (Ilmiah)</label>
+                        <input 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 italic" 
+                          value={editingItem.scientific} 
+                          placeholder="Contoh: Charadrius javanicus"
+                          onChange={e => setEditingItem({...editingItem, scientific: e.target.value})} 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Status Konservasi</label>
+                        <input 
+                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
+                          value={editingItem.status} 
+                          placeholder="Endemik / Dilindungi / Migran"
+                          onChange={e => setEditingItem({...editingItem, status: e.target.value})} 
+                        />
+                      </div>
+                    </div>
                   </>
                 )}
               </div>

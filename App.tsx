@@ -165,12 +165,25 @@ export default function App() {
           <li><a href="#umkm" className="hover:text-white transition-colors">Belanja Lokal</a></li>
           <li><a href="#lokasi" className="hover:text-white transition-colors">Peta Wisata</a></li>
           <li>
-            <button 
+            {/* <button 
               onClick={() => setView(isAuthenticated ? 'admin' : 'login')} 
               className="text-slate-700 hover:text-white transition-colors"
             >
               Admin Dashboard
-            </button>
+            </button> */}
+            <nav aria-label="Akses Internal">
+              <h5 className="font-black text-xs tracking-[0.3em] uppercase text-orange-400 mb-2">Internal</h5>
+              <ul className="space-y-4">
+                <li>
+                  <button 
+                    onClick={() => setView(isAuthenticated ? 'admin' : 'login')} 
+                    className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white px-6 py-3 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border border-white/5"
+                  >
+                    <span>🔐</span> Admin Portal
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </li>
         </ul>
       </nav>

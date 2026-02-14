@@ -83,7 +83,7 @@ export const initialContent: SiteConfig = {
       name: 'Peyek Udang & Wader',
       description: 'Camilan renyah hasil tangkapan segar nelayan lokal.',
       imageUrl: 'https://cnc-magazine.oramiland.com/parenting/original_images/Resep_Peyek_Udang.jpg',
-      priceRange: 'Rp 15.000 - 35.000',
+      priceRange: 'Rp 7.000 - 15.000',
       whatsapp: '6281234567890'
     }
   ]
