@@ -20,6 +20,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
   
   const [editingItem, setEditingItem] = useState<any>(null);
 
+  const birdStatuses = ['Migran', 'Endemik', 'Dilindungi', 'Rentan', 'Langka'];
+
   useEffect(() => {
     setIsCloud(db.isCloudEnabled());
     refreshData();
@@ -39,6 +41,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     setBirds(birdData);
     setContact(contactData);
     setIsLoading(false);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, isGallery: boolean = false, galleryIndex?: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Maaf, ukuran file terlalu besar. Gunakan foto di bawah 2MB agar website tetap ringan.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target?.result as string;
+      if (isGallery && galleryIndex !== undefined) {
+        const newGallery = [...(editingItem.galleryImages || [])];
+        newGallery[galleryIndex] = base64String;
+        setEditingItem({ ...editingItem, galleryImages: newGallery });
+      } else {
+        setEditingItem({ ...editingItem, [fieldName]: base64String });
+      }
+    };
+    reader.onerror = () => {
+      alert("Gagal membaca file. Silakan coba lagi.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const toggleBirdStatus = (status: string) => {
+    const currentStatuses = editingItem.status ? editingItem.status.split(' | ') : [];
+    let newStatuses;
+    if (currentStatuses.includes(status)) {
+      newStatuses = currentStatuses.filter((s: string) => s !== status);
+    } else {
+      newStatuses = [...currentStatuses, status];
+    }
+    setEditingItem({ ...editingItem, status: newStatuses.join(' | ') });
   };
 
   const handleSync = async () => {
@@ -112,7 +151,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex">
-      {/* Sidebar */}
       <aside className="w-72 bg-slate-900 border-r border-white/5 flex flex-col p-8">
         <div className="flex flex-col gap-6 mb-12">
           <div className="flex items-center gap-4">
@@ -122,15 +160,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
               <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Sistem Pengelola</p>
             </div>
           </div>
-
           <div className={`px-4 py-3 rounded-xl border flex items-center gap-3 transition-all ${isCloud ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
             <div className={`w-2 h-2 rounded-full animate-pulse ${isCloud ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
             <div>
               <p className={`text-[10px] font-black uppercase tracking-tighter ${isCloud ? 'text-emerald-500' : 'text-amber-500'}`}>
                 {isCloud ? 'Database Cloud Online' : 'Mode Demo (Lokal)'}
-              </p>
-              <p className="text-[8px] text-slate-500 leading-none mt-0.5">
-                {isCloud ? 'Data Terintegrasi Awan' : 'Simpan di Browser Laptop'}
               </p>
             </div>
           </div>
@@ -141,8 +175,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
             { id: 'attractions', label: 'Wisata', icon: '📍' },
             { id: 'umkm', label: 'UMKM', icon: '🛍️' },
             { id: 'birds', label: 'Biodiversitas', icon: '🐦' },
-            { id: 'settings', label: 'Pengaturan', icon: '⚙️' },
-            { id: 'help', label: 'Panduan', icon: '📖' }
+            { id: 'settings', label: 'Pengaturan', icon: '⚙️' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -159,44 +192,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
         <div className="mt-auto pt-8 border-t border-white/5">
           <button onClick={onBack} className="w-full flex items-center gap-4 px-6 py-3 text-slate-400 hover:text-white transition-all text-sm font-bold text-left">
-            <span>🏠</span> Website Utama
+            <span>🏠</span> Beranda
           </button>
           <button onClick={onLogout} className="w-full flex items-center gap-4 px-6 py-3 text-rose-400 hover:text-rose-300 transition-all text-sm font-bold text-left">
-            <span>🚪</span> Keluar Sesi
+            <span>🚪</span> Keluar
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 p-12 overflow-y-auto max-h-screen bg-slate-950">
         <header className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-4xl font-serif font-bold">
               {activeTab === 'attractions' ? 'Kelola Wisata' : 
-               activeTab === 'umkm' ? 'Kelola Toko UMKM' : 
+               activeTab === 'umkm' ? 'Kelola UMKM' : 
                activeTab === 'birds' ? 'Informasi Burung' : 
-               activeTab === 'help' ? 'Pusat Bantuan' :
                'Pengaturan Umum'}
             </h2>
-            <p className="text-slate-500 mt-2">
-              {isCloud ? 'Setiap perubahan akan langsung sinkron ke internet.' : 'Perubahan tersimpan sementara di browser ini.'}
-            </p>
           </div>
           <div className="flex gap-4">
-             {isCloud && (
-               <button 
-                 onClick={handleSync}
-                 disabled={isSyncing}
-                 className="bg-white/5 hover:bg-white/10 text-emerald-500 border border-emerald-500/20 px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all disabled:opacity-50"
-               >
-                 {isSyncing ? '⌛ Mensinkron...' : '🔄 Sinkron Lokal ke Cloud'}
-               </button>
-             )}
              {['attractions', 'umkm', 'birds'].includes(activeTab) && (
-               <button 
-                 onClick={startCreate}
-                 className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
-               >
+               <button onClick={startCreate} className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl">
                  + Tambah Data
                </button>
              )}
@@ -206,78 +222,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
         {isLoading ? (
           <div className="py-20 text-center">
             <div className="w-10 h-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Sinkronisasi Data...</p>
-          </div>
-        ) : activeTab === 'help' ? (
-          <div className="space-y-8 max-w-4xl">
-            <div className="bg-emerald-900/30 border border-emerald-500/20 p-10 rounded-[2.5rem]">
-              <h4 className="text-xl font-bold mb-6 flex items-center gap-3">
-                <span>🚀</span> Cara Mengaktifkan Cloud (Go Live)
-              </h4>
-              <ol className="space-y-6 text-slate-300">
-                <li className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold">1</div>
-                  <div>
-                    <p className="font-bold text-white">Buat Akun Supabase</p>
-                    <p className="text-sm">Buka <a href="https://supabase.com" target="_blank" className="text-emerald-400 underline">supabase.com</a> dan buat proyek baru dengan nama "Banaran".</p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold">2</div>
-                  <div>
-                    <p className="font-bold text-white">Salin Kunci API</p>
-                    <p className="text-sm">Di dashboard Supabase, masuk ke <strong>Settings &gt; API</strong>. Salin <u>Project URL</u> dan <u>anon public key</u>.</p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold">3</div>
-                  <div>
-                    <p className="font-bold text-white">Update File Kode</p>
-                    <p className="text-sm">Buka file <code>services/db.ts</code> di editor kode Anda, dan tempelkan URL serta Key tersebut di variabel yang disediakan.</p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold">4</div>
-                  <div>
-                    <p className="font-bold text-white">Tekan Tombol Sinkron</p>
-                    <p className="text-sm">Kembali ke dashboard ini. Badge sidebar akan berubah jadi hijau. Klik tombol <strong>"Sinkron Lokal ke Cloud"</strong> di pojok kanan atas untuk memindahkan data lama Anda.</p>
-                  </div>
-                </li>
-              </ol>
-            </div>
-          </div>
-        ) : activeTab === 'settings' && contact ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl">
-            <div className="bg-slate-900 border border-white/5 p-10 rounded-[3rem] shadow-2xl">
-              <h4 className="text-lg font-bold mb-6 flex items-center gap-2"><span>📞</span> Kontak Dusun</h4>
-              <form onSubmit={handleSaveSettings} className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">WhatsApp Utama (Format: 628xxx)</label>
-                  <input 
-                    type="text" 
-                    value={contact.whatsappNumber}
-                    onChange={e => setContact({...contact, whatsappNumber: e.target.value})}
-                    className="w-full bg-slate-800 border border-white/5 rounded-2xl px-6 py-4 text-white outline-none focus:border-emerald-500"
-                  />
-                </div>
-                <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest">Simpan Perubahan</button>
-              </form>
-            </div>
-
-            <div className="bg-slate-900 border border-white/5 p-10 rounded-[3rem] shadow-2xl flex flex-col justify-center items-center text-center">
-              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mb-6 ${isCloud ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
-                {isCloud ? '☁️' : '🏠'}
-              </div>
-              <h4 className="text-xl font-bold mb-2">{isCloud ? 'Terhubung ke Cloud' : 'Masih Mode Lokal'}</h4>
-              <p className="text-sm text-slate-500 max-w-xs mb-8">
-                {isCloud 
-                  ? 'Data Anda sudah aman di server Supabase. Semua orang bisa melihat pembaruan Anda secara real-time.' 
-                  : 'Data Anda saat ini hanya tersimpan di browser laptop ini. Ikuti panduan di tab bantuan untuk Go Live.'}
-              </p>
-              {!isCloud && (
-                <button onClick={() => setActiveTab('help')} className="text-emerald-500 font-bold text-xs uppercase tracking-widest hover:underline">Lihat Panduan Go Live &rarr;</button>
-              )}
-            </div>
+            <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Memuat...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -288,7 +233,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold">{item.title || item.name}</h3>
-                  <p className="text-slate-500 text-sm line-clamp-1">{item.description || item.desc}</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {item.scientific && <span className="text-emerald-500 text-xs italic font-medium mr-2">{item.scientific}</span>}
+                    {item.status && item.status.split(' | ').map((s: string, i: number) => (
+                      <span key={i} className="bg-sky-500/10 text-sky-400 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border border-sky-500/20">{s}</span>
+                    ))}
+                  </div>
+                  <p className="text-slate-500 text-sm line-clamp-1 mt-2">{item.description || item.desc}</p>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => setEditingItem(item)} className="w-12 h-12 rounded-xl bg-slate-800 hover:bg-emerald-600 transition-all flex items-center justify-center">✏️</button>
@@ -300,171 +251,89 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
         )}
       </main>
 
-      {/* CRUD Modal */}
       {editingItem && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
           <div className="bg-slate-900 w-full max-w-2xl rounded-[3rem] shadow-2xl border border-white/10 overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-8 border-b border-white/5 flex justify-between items-center">
-              <h3 className="text-2xl font-bold">Edit Informasi</h3>
-              <button onClick={() => setEditingItem(null)} className="text-slate-400 p-2">❌</button>
+            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-slate-900/50">
+              <h3 className="text-2xl font-bold">Edit {activeTab === 'birds' ? 'Biodiversitas' : 'Konten'}</h3>
+              <button onClick={() => setEditingItem(null)} className="text-slate-400 p-2 hover:text-white transition-colors">❌</button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 overflow-y-auto flex-1 space-y-6">
+            <form onSubmit={handleSave} className="p-8 overflow-y-auto flex-1 space-y-8">
               <div className="space-y-4">
-                <label className="block text-xs font-bold text-slate-500 uppercase">Nama / Judul</label>
-                <input 
-                  className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                  value={editingItem.title || editingItem.name} 
-                  onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'title' : 'name']: e.target.value})} 
-                  required
-                />
-                
-                <label className="block text-xs font-bold text-slate-500 uppercase">Deskripsi Singkat</label>
-                <textarea 
-                  className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 h-32" 
-                  value={editingItem.description || editingItem.desc} 
-                  onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'description' : 'desc']: e.target.value})} 
-                  required
-                />
-
-                <label className="block text-xs font-bold text-slate-500 uppercase">Link Gambar Utama (URL)</label>
-                <input 
-                  className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                  value={editingItem.imageUrl || editingItem.image} 
-                  placeholder="https://images.unsplash.com/..."
-                  onChange={e => setEditingItem({...editingItem, [activeTab === 'birds' ? 'image' : 'imageUrl']: e.target.value})} 
-                  required
-                />
-
-                {/* MODAL FIELDS UNTUK WISATA */}
-                {activeTab === 'attractions' && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Kategori Wisata</label>
-                        <select 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
-                          value={editingItem.category}
-                          onChange={e => setEditingItem({...editingItem, category: e.target.value})}
-                        >
-                          <option value="Ekowisata">Ekowisata</option>
-                          <option value="Petualangan">Petualangan</option>
-                          <option value="Rekreasi">Rekreasi</option>
-                        </select>
+                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Media Utama</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="relative group h-48 rounded-[2rem] overflow-hidden bg-slate-800 border-2 border-dashed border-white/10 hover:border-emerald-500/50 transition-all flex flex-col items-center justify-center cursor-pointer">
+                    {(editingItem.imageUrl || editingItem.image) ? (
+                      <>
+                        <img src={editingItem.imageUrl || editingItem.image} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                        <span className="relative z-10 bg-emerald-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl">Ganti Foto Lokal</span>
+                      </>
+                    ) : (
+                      <div className="text-center p-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Klik Unggah Foto</span>
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Estimasi Biaya</label>
-                        <input 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                          value={editingItem.price} 
-                          placeholder="Rp 10.000 / orang"
-                          onChange={e => setEditingItem({...editingItem, price: e.target.value})} 
-                        />
-                      </div>
-                    </div>
-
-                    <label className="block text-xs font-bold text-slate-500 uppercase">Waktu Terbaik</label>
-                    <input 
-                      className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                      value={editingItem.bestTime} 
-                      placeholder="07:30 - 09:30 WIB"
-                      onChange={e => setEditingItem({...editingItem, bestTime: e.target.value})} 
-                    />
-
-                    <div className="mt-8 pt-8 border-t border-white/5">
-                      <div className="flex justify-between items-center mb-6">
-                        <h4 className="text-sm font-black uppercase tracking-widest text-emerald-500">Galeri Visual Destinasi</h4>
-                        <button 
-                          type="button" 
-                          onClick={handleAddGalleryImage}
-                          className="text-[10px] font-black uppercase tracking-widest bg-emerald-600/10 text-emerald-500 px-4 py-2 rounded-xl border border-emerald-500/20 hover:bg-emerald-600 hover:text-white transition-all"
-                        >
-                          + Tambah Gambar Galeri
-                        </button>
-                      </div>
-                      
-                      <div className="space-y-4">
-                        {(editingItem.galleryImages || []).map((imgUrl: string, idx: number) => (
-                          <div key={idx} className="flex gap-3">
-                            <input 
-                              className="flex-1 bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-sm" 
-                              value={imgUrl} 
-                              placeholder={`URL Gambar Galeri #${idx + 1}`}
-                              onChange={e => handleUpdateGalleryImage(idx, e.target.value)}
-                            />
-                            <button 
-                              type="button" 
-                              onClick={() => handleRemoveGalleryImage(idx)}
-                              className="w-14 h-14 bg-rose-900/20 text-rose-500 border border-rose-500/20 rounded-xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        ))}
-                        {(editingItem.galleryImages || []).length === 0 && (
-                          <p className="text-center text-slate-600 text-[10px] font-bold uppercase tracking-widest py-4 border-2 border-dashed border-white/5 rounded-2xl">Galeri masih kosong</p>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* MODAL FIELDS UNTUK UMKM */}
-                {activeTab === 'umkm' && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Rentang Harga</label>
-                        <input 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                          value={editingItem.priceRange} 
-                          placeholder="Rp 10.000 - 50.000"
-                          onChange={e => setEditingItem({...editingItem, priceRange: e.target.value})} 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">WhatsApp Penjual (628xxx)</label>
-                        <input 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                          value={editingItem.whatsapp} 
-                          onChange={e => setEditingItem({...editingItem, whatsapp: e.target.value})} 
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* MODAL FIELDS UNTUK BURUNG */}
-                {activeTab === 'birds' && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Latin (Ilmiah)</label>
-                        <input 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 italic" 
-                          value={editingItem.scientific} 
-                          placeholder="Contoh: Charadrius javanicus"
-                          onChange={e => setEditingItem({...editingItem, scientific: e.target.value})} 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Status Konservasi</label>
-                        <input 
-                          className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" 
-                          value={editingItem.status} 
-                          placeholder="Endemik / Dilindungi / Migran"
-                          onChange={e => setEditingItem({...editingItem, status: e.target.value})} 
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                    )}
+                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleFileUpload(e, activeTab === 'birds' ? 'image' : 'imageUrl')} />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <input className="w-full bg-slate-800 border border-white/5 text-white p-4 rounded-2xl outline-none focus:border-emerald-500 text-xs" value={editingItem.imageUrl || editingItem.image} placeholder="Atau tempel Link URL..." onChange={e => setEditingItem({...editingItem, [activeTab === 'birds' ? 'image' : 'imageUrl']: e.target.value})} />
+                  </div>
+                </div>
               </div>
 
-              <div className="flex gap-4 pt-6">
-                <button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-2xl font-black uppercase tracking-widest text-[10px]">Simpan Perubahan</button>
-                <button type="button" onClick={() => setEditingItem(null)} className="px-8 bg-slate-800 text-white p-4 rounded-2xl font-bold uppercase tracking-widest text-[10px]">Batal</button>
+              <div className="space-y-6 border-t border-white/5 pt-8">
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-slate-500 uppercase">Nama / Judul</label>
+                  <input className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" value={editingItem.title || editingItem.name} onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'title' : 'name']: e.target.value})} required />
+                </div>
+
+                {activeTab === 'birds' && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase">Nama Latin (Ilmiah)</label>
+                      <input 
+                        className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 italic" 
+                        value={editingItem.scientific || ''} 
+                        placeholder="Contoh: Charadrius javanicus"
+                        onChange={e => setEditingItem({...editingItem, scientific: e.target.value})} 
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="block text-xs font-bold text-slate-500 uppercase">Status Konservasi (Dapat pilih lebih dari satu)</label>
+                      <div className="flex flex-wrap gap-2">
+                        {birdStatuses.map(status => {
+                          const isActive = editingItem.status && editingItem.status.split(' | ').includes(status);
+                          return (
+                            <button
+                              key={status}
+                              type="button"
+                              onClick={() => toggleBirdStatus(status)}
+                              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
+                                isActive 
+                                  ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-900/20' 
+                                  : 'bg-slate-800 border-white/10 text-slate-400 hover:border-emerald-500/50'
+                              }`}
+                            >
+                              {status}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[10px] text-slate-500 italic">Klik pada label di atas untuk menambahkan status konservasi burung.</p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-slate-500 uppercase">Deskripsi</label>
+                  <textarea className="w-full bg-slate-800 text-white p-4 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 h-32" value={editingItem.description || editingItem.desc} onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'description' : 'desc']: e.target.value})} required />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-12 pb-4">
+                <button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white p-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl transition-all">Simpan Perubahan</button>
+                <button type="button" onClick={() => setEditingItem(null)} className="px-10 bg-slate-800 text-white p-5 rounded-2xl font-bold uppercase tracking-widest text-xs">Batal</button>
               </div>
             </form>
           </div>
