@@ -351,7 +351,6 @@
 //---//
 
 
-
 import { createClient } from '@supabase/supabase-js';
 import { AttractionDetail, UMKM } from '../types';
 import { initialContent } from '../content';
@@ -365,8 +364,8 @@ export interface MigratoryBird {
   id: string;
   name: string;
   scientific: string;
-  description: string; // Diubah dari desc ke description
-  imageUrl: string;    // Diubah dari image ke imageUrl
+  description: string; 
+  image: string;       // Menggunakan 'image' sesuai kolom di database
   status?: string;
 }
 
@@ -384,7 +383,7 @@ const initialBirds: MigratoryBird[] = [
     scientific: 'Charadrius javanicus',
     status: 'Endemik & Dilindungi',
     description: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
-    imageUrl: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
+    image: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
   }
 ];
 
@@ -420,9 +419,19 @@ export const db = {
       const birds = getLocal('birds') || [];
       const contact = getLocal('contact');
 
+      // Pastikan data yang dikirim ke cloud bersih dari kolom lama
+      const cleanBirds = birds.map((b: any) => ({
+        id: b.id,
+        name: b.name,
+        scientific: b.scientific,
+        description: b.description || b.desc,
+        image: b.image || b.imageUrl,
+        status: b.status
+      }));
+
       if (attractions.length > 0) await supabase.from('attractions').upsert(attractions);
       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
-      if (birds.length > 0) await supabase.from('birds').upsert(birds);
+      if (cleanBirds.length > 0) await supabase.from('birds').upsert(cleanBirds);
       if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
 
       return { success: true, message: 'Sinkronisasi Berhasil!' };
@@ -483,7 +492,16 @@ export const db = {
   },
 
   saveBird: async (bird: MigratoryBird) => {
-    const { error } = await supabase.from('birds').upsert(bird);
+    // Pastikan payload bersih sebelum dikirim
+    const payload = {
+      id: bird.id,
+      name: bird.name,
+      scientific: bird.scientific,
+      description: bird.description,
+      image: bird.image,
+      status: bird.status
+    };
+    const { error } = await supabase.from('birds').upsert(payload);
     if (error) throw error;
     setLocal('birds', await db.getBirds());
   },
@@ -493,4 +511,3 @@ export const db = {
     setLocal('birds', await db.getBirds());
   }
 };
-

@@ -220,7 +220,6 @@
 
 
 
-
 import React, { useState } from 'react';
 import { MigratoryBird } from '../services/db';
 
@@ -235,7 +234,7 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
     <section id="burung" className="py-24 bg-sky-50 scroll-mt-24" aria-labelledby="bird-title">
       <div className="container mx-auto px-6">
         <div className="mb-20">
-          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block">Kawasan Ekosistem Esensial</span>
+          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg">Kawasan Ekosistem Esensial</span>
           <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span></h2>
         </div>
 
@@ -243,18 +242,18 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
           {birdList.map((bird) => (
             <div key={bird.id} onClick={() => setSelectedBird(bird)} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-sky-100 hover:-translate-y-4 transition-all duration-500 cursor-pointer flex flex-col h-full">
               <div className="h-64 overflow-hidden relative">
-                <img src={bird.imageUrl} alt={bird.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={bird.image} alt={bird.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute bottom-4 left-4 flex flex-wrap gap-1">
                   {bird.status?.split(' | ').map((s, i) => (
-                    <span key={i} className="bg-white/90 backdrop-blur-md text-sky-900 px-2 py-0.5 rounded-md text-[8px] font-black uppercase">{s}</span>
+                    <span key={i} className="bg-white/90 backdrop-blur-md text-sky-900 px-2 py-0.5 rounded-md text-[8px] font-black uppercase shadow-sm">{s}</span>
                   ))}
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-1">
-                <h4 className="text-xl font-bold mb-1">{bird.name}</h4>
+                <h4 className="text-xl font-bold mb-1 text-slate-900">{bird.name}</h4>
                 <p className="text-sky-600 text-[10px] italic font-black uppercase mb-4">{bird.scientific}</p>
-                <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-6 flex-1">{bird.description}</p>
-                <button className="text-sky-700 text-[10px] font-black uppercase border-b-2 border-sky-100 self-start">Detail Burung &rarr;</button>
+                <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-6 flex-1 font-medium">{bird.description}</p>
+                <button className="text-sky-700 text-[10px] font-black uppercase border-b-2 border-sky-100 group-hover:border-sky-700 self-start transition-all pb-0.5">Detail Burung &rarr;</button>
               </div>
             </div>
           ))}
@@ -264,11 +263,12 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
       {selectedBird && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-xl" onClick={() => setSelectedBird(null)}></div>
-          <div className="bg-white w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl relative z-10 p-10">
-            <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8">❌</button>
+          <div className="bg-white w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl relative z-10 p-10 border border-white/20">
+            <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8 text-slate-400 hover:text-rose-600 transition-colors">❌</button>
             <h3 className="text-4xl font-serif text-slate-900 mb-2">{selectedBird.name}</h3>
-            <p className="text-sky-600 italic font-bold mb-6">{selectedBird.scientific}</p>
-            <p className="text-slate-700 text-lg leading-relaxed">{selectedBird.description}</p>
+            <p className="text-sky-600 italic font-bold mb-6 text-sm">{selectedBird.scientific}</p>
+            <div className="w-full h-[1px] bg-slate-100 mb-6"></div>
+            <p className="text-slate-700 text-lg leading-relaxed font-medium">{selectedBird.description}</p>
           </div>
         </div>
       )}

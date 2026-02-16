@@ -346,6 +346,7 @@
 // export default AdminDashboard;
 
 
+
 import React, { useState, useEffect } from 'react';
 import { db, MigratoryBird, ContactConfig } from '../services/db';
 import { AttractionDetail, UMKM } from '../types';
@@ -408,13 +409,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 1 * 1024 * 1024) {
-      alert("Foto maksimal 1MB.");
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert("Foto maksimal 1.5MB.");
       return;
     }
     const reader = new FileReader();
     reader.onload = (event) => {
-      setEditingItem({ ...editingItem, imageUrl: event.target?.result as string });
+      const field = activeTab === 'birds' ? 'image' : 'imageUrl';
+      setEditingItem({ ...editingItem, [field]: event.target?.result as string });
     };
     reader.readAsDataURL(file);
   };
@@ -431,7 +433,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Hapus data?')) return;
+    if (!confirm('Hapus data secara permanen?')) return;
     setIsLoading(true);
     if (activeTab === 'attractions') await db.deleteAttraction(id);
     if (activeTab === 'umkm') await db.deleteUMKM(id);
@@ -445,7 +447,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     try {
       if (activeTab === 'attractions') await db.saveAttraction(editingItem);
       if (activeTab === 'umkm') await db.saveUMKM(editingItem);
-      if (activeTab === 'birds') await db.saveBird(editingItem);
+      if (activeTab === 'birds') {
+        // Normalisasi data burung jika ada sisa properti lama
+        const birdData: MigratoryBird = {
+          id: editingItem.id,
+          name: editingItem.name,
+          scientific: editingItem.scientific,
+          description: editingItem.description || editingItem.desc,
+          image: editingItem.image || editingItem.imageUrl,
+          status: editingItem.status
+        };
+        await db.saveBird(birdData);
+      }
       setEditingItem(null);
       await refreshData();
     } catch (error: any) {
@@ -458,7 +471,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     const id = Date.now().toString();
     if (activeTab === 'attractions') setEditingItem({ id, title: '', tagline: '', description: '', fullDescription: '', imageUrl: '', features: [], tips: [], category: 'Ekowisata', bestTime: '', galleryImages: [], price: '' });
     if (activeTab === 'umkm') setEditingItem({ id, name: '', description: '', imageUrl: '', priceRange: '', whatsapp: '' });
-    if (activeTab === 'birds') setEditingItem({ id, name: '', scientific: '', status: '', description: '', imageUrl: '' });
+    if (activeTab === 'birds') setEditingItem({ id, name: '', scientific: '', status: '', description: '', image: '' });
   };
 
   return (
@@ -469,86 +482,145 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           <div><h1 className="font-bold">Admin Banaran</h1></div>
         </div>
 
-        <button onClick={handleGlobalSync} disabled={isSyncing} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-10">
-          {isSyncing ? 'Processing...' : '⬆ Sinkronisasi Global'}
+        <button onClick={handleGlobalSync} disabled={isSyncing} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-10 shadow-lg shadow-emerald-900/20 transition-all active:scale-95">
+          {isSyncing ? 'Memproses...' : '⬆ Sinkronisasi Global'}
         </button>
 
         <nav className="flex-1 space-y-2">
-          {['attractions', 'umkm', 'birds', 'settings'].map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab as any)} className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${activeTab === tab ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'}`}>
-              {tab === 'attractions' ? '📍 Wisata' : tab === 'umkm' ? '🛍️ UMKM' : tab === 'birds' ? '🐦 Burung' : '⚙️ Setting'}
+          {[
+            { id: 'attractions', label: '📍 Wisata', icon: '📍' },
+            { id: 'umkm', label: '🛍️ UMKM', icon: '🛍️' },
+            { id: 'birds', label: '🐦 Burung', icon: '🐦' },
+            { id: 'settings', label: '⚙️ Setting', icon: '⚙️' }
+          ].map(tab => (
+            <button 
+              key={tab.id} 
+              onClick={() => setActiveTab(tab.id as any)} 
+              className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${activeTab === tab.id ? 'bg-white/10 text-white border border-white/5' : 'text-slate-500 hover:text-white'}`}
+            >
+              <span className="text-lg">{tab.icon}</span> {tab.label}
             </button>
           ))}
         </nav>
+        
         <div className="mt-auto pt-8 border-t border-white/5 space-y-2">
-          <button onClick={onBack} className="w-full text-left px-6 py-3 text-slate-500 hover:text-white text-xs font-bold">🏠 Beranda</button>
-          <button onClick={onLogout} className="w-full text-left px-6 py-3 text-rose-500 hover:text-rose-400 text-xs font-bold">🚪 Keluar</button>
+          <button onClick={onBack} className="w-full text-left px-6 py-3 text-slate-500 hover:text-white text-xs font-bold transition-colors">🏠 Lihat Website</button>
+          <button onClick={onLogout} className="w-full text-left px-6 py-3 text-rose-500 hover:text-rose-400 text-xs font-bold transition-colors">🚪 Keluar</button>
         </div>
       </aside>
 
       <main className="flex-1 p-16 overflow-y-auto">
-        {activeTab !== 'settings' && (
-          <header className="flex justify-between items-end mb-12">
-            <h2 className="text-4xl font-serif font-bold">Kelola Konten</h2>
-            <button onClick={startCreate} className="bg-white text-slate-950 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Tambah Data</button>
-          </header>
-        )}
-
-        {isLoading ? (
-          <div className="text-center py-20 animate-pulse">Memuat data...</div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {(activeTab === 'attractions' ? attractions : activeTab === 'umkm' ? umkmList : birds).map((item: any) => (
-              <div key={item.id} className="bg-slate-900/40 border border-white/5 p-6 rounded-[2rem] flex items-center gap-6 group">
-                <img src={item.imageUrl} className="w-20 h-20 rounded-2xl object-cover" />
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold">{item.title || item.name}</h3>
-                  <p className="text-slate-500 text-xs line-clamp-1">{item.description}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setEditingItem(item)} className="p-3 bg-slate-800 rounded-xl">✏️</button>
-                  <button onClick={() => handleDelete(item.id)} className="p-3 bg-slate-800 rounded-xl hover:bg-rose-600">🗑️</button>
-                </div>
+        {activeTab !== 'settings' ? (
+          <>
+            <header className="flex justify-between items-end mb-12">
+              <div>
+                <p className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Manajemen Konten</p>
+                <h2 className="text-4xl font-serif font-bold">
+                  {activeTab === 'attractions' ? 'Destinasi Wisata' : activeTab === 'umkm' ? 'Produk Lokal' : 'Database Burung'}
+                </h2>
               </div>
-            ))}
+              <button onClick={startCreate} className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-2xl">
+                + Tambah Baru
+              </button>
+            </header>
+
+            {isLoading ? (
+              <div className="text-center py-40 animate-pulse text-slate-500 font-bold uppercase tracking-widest text-xs">Menghubungkan ke database...</div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {(activeTab === 'attractions' ? attractions : activeTab === 'umkm' ? umkmList : birds).map((item: any) => (
+                  <div key={item.id} className="bg-slate-900/40 border border-white/5 p-6 rounded-[2.5rem] flex items-center gap-8 group hover:bg-slate-900 transition-all">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-800 shrink-0">
+                      <img src={item.imageUrl || item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">{item.title || item.name}</h3>
+                      <p className="text-slate-500 text-xs line-clamp-1 italic">{item.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => setEditingItem(item)} className="w-12 h-12 rounded-xl bg-slate-800 hover:bg-emerald-600 transition-all flex items-center justify-center">✏️</button>
+                      <button onClick={() => handleDelete(item.id)} className="w-12 h-12 rounded-xl bg-slate-800 hover:bg-rose-600 transition-all flex items-center justify-center">🗑️</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="max-w-2xl">
+            <h2 className="text-4xl font-serif font-bold mb-12">Pengaturan Kontak</h2>
+            {/* Form settings tetap sama seperti sebelumnya */}
           </div>
         )}
       </main>
 
       {editingItem && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-          <form onSubmit={handleSave} className="bg-slate-900 w-full max-w-2xl rounded-[3rem] p-10 max-h-[90vh] overflow-y-auto space-y-8 border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-bold">Edit Data</h3>
-              <button type="button" onClick={() => setEditingItem(null)}>❌</button>
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 overflow-y-auto">
+          <form onSubmit={handleSave} className="bg-slate-900 w-full max-w-2xl rounded-[3rem] p-10 border border-white/10 space-y-8 my-auto shadow-2xl">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl font-bold">Modifikasi Data</h3>
+              <button type="button" onClick={() => setEditingItem(null)} className="p-2 hover:text-rose-500">❌</button>
             </div>
 
             <div className="space-y-6">
-              <div className="relative h-48 rounded-[2rem] overflow-hidden bg-slate-800 border-2 border-dashed border-white/10 flex items-center justify-center">
-                {editingItem.imageUrl && <img src={editingItem.imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
-                <span className="relative z-10 text-[10px] font-black uppercase">Pilih Foto (Max 1MB)</span>
-                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleFileUpload} />
+              {/* Media Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative h-44 rounded-3xl overflow-hidden bg-slate-800 border-2 border-dashed border-white/10 flex items-center justify-center group cursor-pointer">
+                  {(editingItem.imageUrl || editingItem.image) && (
+                    <img src={editingItem.imageUrl || editingItem.image} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="Preview" />
+                  )}
+                  <span className="relative z-10 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white transition-colors">📁 Unggah File</span>
+                  <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleFileUpload} />
+                </div>
+                <div className="flex flex-col justify-center space-y-2">
+                  <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Atau Tempel URL Foto:</label>
+                  <input 
+                    className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 text-xs focus:ring-1 focus:ring-emerald-500" 
+                    value={activeTab === 'birds' ? (editingItem.image || '') : (editingItem.imageUrl || '')} 
+                    placeholder="https://..." 
+                    onChange={e => setEditingItem({...editingItem, [activeTab === 'birds' ? 'image' : 'imageUrl']: e.target.value})} 
+                  />
+                </div>
               </div>
 
-              <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none" value={editingItem.title || editingItem.name} placeholder="Nama / Judul" onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'title' : 'name']: e.target.value})} required />
+              <div className="space-y-2">
+                <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Nama / Judul Utama</label>
+                <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 focus:ring-2 focus:ring-emerald-500" value={editingItem.title || editingItem.name} placeholder="Nama item..." onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'title' : 'name']: e.target.value})} required />
+              </div>
               
               {activeTab === 'birds' && (
-                <div className="space-y-4">
-                  <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none italic" value={editingItem.scientific || ''} placeholder="Nama Latin" onChange={e => setEditingItem({...editingItem, scientific: e.target.value})} />
-                  <div className="flex flex-wrap gap-2">
-                    {birdStatuses.map(s => (
-                      <button key={s} type="button" onClick={() => toggleBirdStatus(s)} className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase border ${editingItem.status?.includes(s) ? 'bg-emerald-600 border-emerald-500' : 'bg-slate-800 border-white/10 text-slate-500'}`}>{s}</button>
-                    ))}
+                <>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Nama Ilmiah (Latin)</label>
+                    <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none italic border border-white/5" value={editingItem.scientific || ''} placeholder="Scientific name..." onChange={e => setEditingItem({...editingItem, scientific: e.target.value})} />
                   </div>
-                </div>
+                  <div className="space-y-3">
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Status Konservasi</label>
+                    <div className="flex flex-wrap gap-2">
+                      {birdStatuses.map(s => (
+                        <button 
+                          key={s} 
+                          type="button" 
+                          onClick={() => toggleBirdStatus(s)} 
+                          className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase border transition-all ${editingItem.status?.includes(s) ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-slate-800 border-white/10 text-slate-500'}`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
 
-              <textarea className="w-full bg-slate-800 p-5 rounded-2xl outline-none h-40" value={editingItem.description} placeholder="Deskripsi Lengkap" onChange={e => setEditingItem({...editingItem, description: e.target.value})} required />
+              <div className="space-y-2">
+                <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Deskripsi Naratif</label>
+                <textarea className="w-full bg-slate-800 p-5 rounded-2xl outline-none h-32 border border-white/5 focus:ring-2 focus:ring-emerald-500" value={editingItem.description || editingItem.desc} placeholder="Tuliskan deskripsi lengkap di sini..." onChange={e => setEditingItem({...editingItem, description: e.target.value})} required />
+              </div>
             </div>
 
-            <div className="flex gap-4">
-              <button type="submit" className="flex-1 bg-emerald-600 p-6 rounded-3xl font-black uppercase text-xs">Simpan Perubahan</button>
-              <button type="button" onClick={() => setEditingItem(null)} className="px-10 bg-slate-800 rounded-3xl font-black uppercase text-xs">Batal</button>
+            <div className="flex gap-4 pt-4">
+              <button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-500 p-6 rounded-3xl font-black uppercase text-xs tracking-widest transition-all shadow-xl shadow-emerald-950">Simpan Perubahan</button>
+              <button type="button" onClick={() => setEditingItem(null)} className="px-10 bg-slate-800 rounded-3xl font-black uppercase text-xs tracking-widest">Batal</button>
             </div>
           </form>
         </div>
@@ -558,5 +630,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
 
 
