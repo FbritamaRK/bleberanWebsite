@@ -513,6 +513,7 @@
 // };
 
 
+
 import { createClient } from '@supabase/supabase-js';
 import { AttractionDetail, UMKM } from '../types';
 import { initialContent } from '../content';
@@ -536,7 +537,7 @@ export interface ContactConfig {
   email: string;
   address: string;
   whatsappNumber: string;
-  logoUrl?: string; // Properti baru untuk menyimpan URL logo
+  logoUrl?: string; 
 }
 
 const initialBirds: MigratoryBird[] = [
@@ -594,7 +595,12 @@ export const db = {
       if (attractions.length > 0) await supabase.from('attractions').upsert(attractions);
       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
       if (cleanBirds.length > 0) await supabase.from('birds').upsert(cleanBirds);
-      if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
+      
+      if (contact) {
+        // Pisahkan logoUrl agar tidak menyebabkan error kolom pada tabel settings
+        const { logoUrl, ...supabaseData } = contact;
+        await supabase.from('settings').upsert({ id: 1, ...supabaseData });
+      }
 
       return { success: true, message: 'Sinkronisasi Berhasil!' };
     } catch (error: any) {
@@ -603,15 +609,33 @@ export const db = {
   },
 
   getContact: async (): Promise<ContactConfig> => {
-    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
-    if (!error && data) return data;
-    return getLocal('contact') || initialContent.contact;
+    // 1. Ambil data teks dari Cloud
+    const { data: cloudData, error } = await supabase.from('settings').select('*').eq('id', 1).single();
+    
+    // 2. Ambil logo dari Local Storage
+    const localData = getLocal('contact') || initialContent.contact;
+
+    if (!error && cloudData) {
+      // Gabungkan data cloud (teks) dengan data lokal (logo)
+      return { ...cloudData, logoUrl: localData.logoUrl };
+    }
+    return localData;
   },
   
   saveContact: async (contact: ContactConfig) => {
+    // 1. Simpan konfigurasi lengkap (termasuk logo) ke Local Storage
     setLocal('contact', contact);
-    const { error } = await supabase.from('settings').upsert({ id: 1, ...contact });
-    if (error) throw error;
+
+    // 2. Siapkan data untuk Supabase (tanpa logoUrl)
+    const { logoUrl, ...supabasePayload } = contact;
+
+    // 3. Update data teks ke Cloud
+    const { error } = await supabase.from('settings').upsert({ id: 1, ...supabasePayload });
+    
+    // Jika ada error (misal karena skema), kita tetap biarkan aplikasi jalan karena data sudah masuk localStorage
+    if (error) {
+      console.warn("Sinkronisasi Cloud Gagal (Logo tetap tersimpan secara lokal):", error.message);
+    }
   },
 
   getAttractions: async (): Promise<AttractionDetail[]> => {
