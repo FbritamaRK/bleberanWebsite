@@ -742,10 +742,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
         <nav className="flex-1 space-y-2">
           {[
-            { id: 'attractions', label: '📍 Wisata', icon: '📍' },
-            { id: 'umkm', label: '🛍️ UMKM', icon: '🛍️' },
-            { id: 'birds', label: '🐦 Burung', icon: '🐦' },
-            { id: 'settings', label: '⚙️ Setting', icon: '⚙️' }
+            { id: 'attractions', label: 'Wisata', icon: '📍' },
+            { id: 'umkm', label: 'UMKM', icon: '🛍️' },
+            { id: 'birds', label: 'Burung', icon: '🐦' },
+            { id: 'settings', label: 'Setting', icon: '⚙️' }
           ].map(tab => (
             <button 
               key={tab.id} 
