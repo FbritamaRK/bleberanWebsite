@@ -176,6 +176,8 @@
 // };
 
 
+
+
 import { createClient } from '@supabase/supabase-js';
 import { AttractionDetail, UMKM } from '../types';
 import { initialContent } from '../content';
