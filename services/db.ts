@@ -527,7 +527,7 @@ export interface MigratoryBird {
   name: string;
   scientific: string;
   description: string; 
-  image: string;       // Menggunakan 'image' sesuai kolom di database
+  image: string;       
   status?: string;
 }
 
@@ -536,6 +536,7 @@ export interface ContactConfig {
   email: string;
   address: string;
   whatsappNumber: string;
+  logoUrl?: string; // Properti baru untuk menyimpan URL logo
 }
 
 const initialBirds: MigratoryBird[] = [
@@ -581,7 +582,6 @@ export const db = {
       const birds = getLocal('birds') || [];
       const contact = getLocal('contact');
 
-      // Pastikan data yang dikirim ke cloud bersih dari kolom lama
       const cleanBirds = birds.map((b: any) => ({
         id: b.id,
         name: b.name,
@@ -603,14 +603,15 @@ export const db = {
   },
 
   getContact: async (): Promise<ContactConfig> => {
-    const { data, error } = await supabase.from('settings').select('*').single();
+    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
     if (!error && data) return data;
     return getLocal('contact') || initialContent.contact;
   },
   
   saveContact: async (contact: ContactConfig) => {
     setLocal('contact', contact);
-    await supabase.from('settings').upsert({ id: 1, ...contact });
+    const { error } = await supabase.from('settings').upsert({ id: 1, ...contact });
+    if (error) throw error;
   },
 
   getAttractions: async (): Promise<AttractionDetail[]> => {
@@ -654,7 +655,6 @@ export const db = {
   },
 
   saveBird: async (bird: MigratoryBird) => {
-    // Pastikan payload bersih sebelum dikirim
     const payload = {
       id: bird.id,
       name: bird.name,

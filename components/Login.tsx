@@ -4,16 +4,16 @@ import React, { useState } from 'react';
 interface LoginProps {
   onLogin: () => void;
   onBack: () => void;
+  logoUrl?: string;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onBack, logoUrl }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Password default untuk keperluan KKN: bleberan2026
-    if (password === 'bleberan2026') {
+    if (password === 'banaran2024') {
       sessionStorage.setItem('admin_auth', 'true');
       onLogin();
     } else {
@@ -23,15 +23,18 @@ const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Ornaments */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-sky-600/10 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2"></div>
 
       <div className="w-full max-w-md relative z-10">
         <div className="bg-slate-900 border border-white/5 p-10 rounded-[3rem] shadow-2xl">
           <div className="flex flex-col items-center mb-10">
-            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center font-black text-3xl mb-6 shadow-xl shadow-emerald-900/20">
-              B
+            <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center overflow-hidden mb-6 shadow-xl shadow-emerald-900/20">
+              {logoUrl ? (
+                <img src={logoUrl} className="w-full h-full object-contain p-2 bg-white" alt="Logo" />
+              ) : (
+                <span className="font-black text-3xl text-white">B</span>
+              )}
             </div>
             <h1 className="text-2xl font-serif font-bold text-white">Login Administrator</h1>
             <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-black mt-2">Dusun Banaran</p>

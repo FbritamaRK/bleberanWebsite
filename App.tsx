@@ -214,31 +214,33 @@ import MangroveDetailView from './components/MangroveDetailView';
 import BirdMigration from './components/BirdMigration';
 import AdminDashboard from './components/AdminDashboard';
 import Login from './components/Login';
-import { db, MigratoryBird } from './services/db';
+import { db, MigratoryBird, ContactConfig } from './services/db';
 import { AttractionDetail, UMKM } from './types';
 
 export default function App() {
   const [view, setView] = useState<'home' | 'detail' | 'admin' | 'login' | 'mangrove-detail'>('home');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   
-  // State Global untuk Sinkronisasi
   const [attractions, setAttractions] = useState<AttractionDetail[]>([]);
   const [umkmList, setUmkmList] = useState<UMKM[]>([]);
   const [birds, setBirds] = useState<MigratoryBird[]>([]);
+  const [siteSettings, setSiteSettings] = useState<ContactConfig | null>(null);
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadAllData = async () => {
     try {
-      const [attrData, umkmData, birdData] = await Promise.all([
+      const [attrData, umkmData, birdData, contactData] = await Promise.all([
         db.getAttractions(),
         db.getUMKM(),
-        db.getBirds()
+        db.getBirds(),
+        db.getContact()
       ]);
       setAttractions(attrData);
       setUmkmList(umkmData);
       setBirds(birdData);
+      setSiteSettings(contactData);
     } catch (error) {
       console.error("Load Data Error:", error);
     } finally {
@@ -249,7 +251,6 @@ export default function App() {
   useEffect(() => {
     loadAllData();
     
-    // AKTIFKAN SINKRONISASI REAL-TIME GLOBAL
     const unsubscribe = db.subscribe(() => {
       console.log('Perubahan terdeteksi di Cloud, memperbarui data...');
       loadAllData();
@@ -291,11 +292,11 @@ export default function App() {
   };
 
   if (view === 'login') {
-    return <Login onLogin={handleLoginSuccess} onBack={handleBackHome} />;
+    return <Login onLogin={handleLoginSuccess} onBack={handleBackHome} logoUrl={siteSettings?.logoUrl} />;
   }
 
   if (view === 'admin') {
-    if (!isAuthenticated) return <Login onLogin={handleLoginSuccess} onBack={handleBackHome} />;
+    if (!isAuthenticated) return <Login onLogin={handleLoginSuccess} onBack={handleBackHome} logoUrl={siteSettings?.logoUrl} />;
     return <AdminDashboard onBack={handleBackHome} onLogout={handleLogout} />;
   }
 
@@ -312,7 +313,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-emerald-100 selection:text-emerald-900">
-      <Navbar onAdminAccess={handleAdminAccess} />
+      <Navbar onAdminAccess={handleAdminAccess} logoUrl={siteSettings?.logoUrl} />
       <Hero />
       
       <aside aria-label="Statistik Dusun" className="bg-white py-20 border-b border-slate-100">
@@ -359,7 +360,11 @@ export default function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-20 pb-20 border-b border-white/10">
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-4 mb-8">
-                <div className="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center font-black text-3xl">B</div>
+                {siteSettings?.logoUrl ? (
+                   <img src={siteSettings.logoUrl} className="w-14 h-14 object-contain" alt="Logo" />
+                ) : (
+                   <div className="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center font-black text-3xl">B</div>
+                )}
                 <div>
                   <h5 className="text-3xl font-serif font-bold tracking-tight">Pesona Banaran</h5>
                   <p className="text-emerald-400 text-[10px] font-black tracking-[0.4em] uppercase">Kawasan Ekosistem Esensial</p>
@@ -399,3 +404,4 @@ export default function App() {
     </div>
   );
 }
+

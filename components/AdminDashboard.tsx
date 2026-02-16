@@ -561,6 +561,7 @@
 
 
 
+
 import React, { useState, useEffect } from 'react';
 import { db, MigratoryBird, ContactConfig } from '../services/db';
 import { AttractionDetail, UMKM } from '../types';
@@ -620,7 +621,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     if (result.success) refreshData();
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'item' | 'settings') => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 1.5 * 1024 * 1024) {
@@ -629,8 +630,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     }
     const reader = new FileReader();
     reader.onload = (event) => {
-      const field = activeTab === 'birds' ? 'image' : 'imageUrl';
-      setEditingItem({ ...editingItem, [field]: event.target?.result as string });
+      const dataUrl = event.target?.result as string;
+      if (target === 'item') {
+        const field = activeTab === 'birds' ? 'image' : 'imageUrl';
+        setEditingItem({ ...editingItem, [field]: dataUrl });
+      } else {
+        setContact(prev => prev ? { ...prev, logoUrl: dataUrl } : null);
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -696,6 +702,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     }
   };
 
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contact) return;
+    setIsLoading(true);
+    try {
+      await db.saveContact(contact);
+      alert('Pengaturan berhasil diperbarui!');
+      refreshData();
+    } catch (error: any) {
+      alert('Gagal simpan pengaturan: ' + error.message);
+      setIsLoading(false);
+    }
+  };
+
   const startCreate = () => {
     const id = Date.now().toString();
     if (activeTab === 'attractions') setEditingItem({ id, title: '', tagline: '', description: '', fullDescription: '', imageUrl: '', features: [], tips: [], category: 'Ekowisata', bestTime: '', galleryImages: [], price: 'Rp 0' });
@@ -707,7 +727,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans">
       <aside className="w-80 bg-slate-900 border-r border-white/5 flex flex-col p-8">
         <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center font-black text-2xl">B</div>
+          {contact?.logoUrl ? (
+             <img src={contact.logoUrl} className="w-12 h-12 rounded-xl object-contain" alt="Logo" />
+          ) : (
+             <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center font-black text-2xl">B</div>
+          )}
           <div><h1 className="font-bold">Admin Banaran</h1></div>
         </div>
 
@@ -743,7 +767,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           <div>
             <p className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Manajemen Konten</p>
             <h2 className="text-4xl font-serif font-bold">
-              {activeTab === 'attractions' ? 'Destinasi Wisata' : activeTab === 'umkm' ? 'Produk Lokal' : activeTab === 'birds' ? 'Database Burung' : 'Pengaturan'}
+              {activeTab === 'attractions' ? 'Destinasi Wisata' : activeTab === 'umkm' ? 'Produk Lokal' : activeTab === 'birds' ? 'Database Burung' : 'Pengaturan Umum'}
             </h2>
           </div>
           {activeTab !== 'settings' && (
@@ -755,6 +779,44 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
         {isLoading ? (
           <div className="text-center py-40 animate-pulse text-slate-500 font-bold uppercase tracking-widest text-xs">Sinkronisasi Data...</div>
+        ) : activeTab === 'settings' ? (
+          <div className="max-w-3xl">
+            <form onSubmit={handleSaveSettings} className="bg-slate-900 border border-white/5 p-12 rounded-[3rem] space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                 <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Logo Website</label>
+                    <div className="relative aspect-square w-32 bg-slate-800 rounded-3xl overflow-hidden border-2 border-dashed border-white/10 flex items-center justify-center group cursor-pointer">
+                       {contact?.logoUrl && <img src={contact.logoUrl} className="absolute inset-0 w-full h-full object-contain" alt="Logo Preview" />}
+                       <span className="relative z-10 text-[9px] font-black opacity-0 group-hover:opacity-100 transition-opacity">GANTI LOGO</span>
+                       <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleFileUpload(e, 'settings')} />
+                    </div>
+                    <input 
+                      className="w-full bg-slate-800 p-4 rounded-xl outline-none border border-white/5 text-[10px]" 
+                      value={contact?.logoUrl || ''} 
+                      placeholder="Atau tempel URL logo..." 
+                      onChange={e => setContact(prev => prev ? {...prev, logoUrl: e.target.value} : null)}
+                    />
+                 </div>
+                 <div className="space-y-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">WhatsApp (628xxx)</label>
+                       <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5" value={contact?.whatsappNumber || ''} onChange={e => setContact(prev => prev ? {...prev, whatsappNumber: e.target.value} : null)} />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Email Dusun</label>
+                       <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5" value={contact?.email || ''} onChange={e => setContact(prev => prev ? {...prev, email: e.target.value} : null)} />
+                    </div>
+                 </div>
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Alamat Lengkap</label>
+                 <textarea className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 h-24" value={contact?.address || ''} onChange={e => setContact(prev => prev ? {...prev, address: e.target.value} : null)} />
+              </div>
+              <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 p-6 rounded-3xl font-black uppercase text-xs tracking-widest transition-all">
+                 Simpan Konfigurasi
+              </button>
+            </form>
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {(activeTab === 'attractions' ? attractions : activeTab === 'umkm' ? umkmList : birds).map((item: any) => (
@@ -797,7 +859,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                       <img src={editingItem.imageUrl || editingItem.image} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="Preview" />
                     )}
                     <span className="relative z-10 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white mb-2">📁 Unggah File</span>
-                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleFileUpload} />
+                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleFileUpload(e, 'item')} />
                   </div>
                   <input 
                     className="w-full bg-slate-800 p-4 rounded-xl outline-none border border-white/5 text-[10px] focus:ring-1 focus:ring-emerald-500" 
@@ -907,4 +969,5 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
 
