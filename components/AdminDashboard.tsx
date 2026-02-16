@@ -562,6 +562,7 @@
 
 
 
+
 import React, { useState, useEffect } from 'react';
 import { db, MigratoryBird, ContactConfig } from '../services/db';
 import { AttractionDetail, UMKM } from '../types';
@@ -905,6 +906,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   </div>
                 )}
 
+                {activeTab === 'umkm' && (
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Nomor WhatsApp (628xxx)</label>
+                    <input 
+                      className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 focus:ring-2 focus:ring-emerald-500" 
+                      value={editingItem.whatsapp || ''} 
+                      placeholder="Contoh: 628123456789" 
+                      onChange={e => setEditingItem({...editingItem, whatsapp: e.target.value})} 
+                      required 
+                    />
+                  </div>
+                )}
+
                 {activeTab === 'birds' && (
                   <>
                     <div className="space-y-2">
@@ -969,5 +983,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
 
 

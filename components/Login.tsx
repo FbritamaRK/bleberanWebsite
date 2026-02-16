@@ -13,7 +13,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onBack, logoUrl }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'banaran2024') {
+    if (password === 'bleberan2026') {
       sessionStorage.setItem('admin_auth', 'true');
       onLogin();
     } else {
