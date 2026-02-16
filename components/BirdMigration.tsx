@@ -239,6 +239,9 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
           <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">
             Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span>
           </h2>
+           <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
+//               Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+//             </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

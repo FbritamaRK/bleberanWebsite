@@ -378,7 +378,7 @@ export default function App() {
             <nav aria-label="Tautan Penting">
               <h5 className="font-black text-xs tracking-[0.3em] uppercase text-emerald-400 mb-8">Eksplorasi</h5>
               <ul className="space-y-4 text-slate-300 text-sm font-bold">
-                <li><a href="#home" className="hover:text-white transition-colors">Beranda Utama</a></li>
+                <li><a href="#home" className="hover:text-white transition-colors">Beranda</a></li>
                 <li><a href="#wisata" className="hover:text-white transition-colors">Destinasi Alam</a></li>
                 <li><a href="#burung" className="hover:text-white transition-colors">Burung Migran</a></li>
                 <li><a href="#umkm" className="hover:text-white transition-colors">Belanja Lokal</a></li>
@@ -397,7 +397,7 @@ export default function App() {
           </div>
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
-            <p>&copy; 2024 Tim KKN-PPM UGM/UNY Dusun Banaran</p>
+            <p>&copy; 2026 KKN UII 72 UNIT 70 Dusun BLEBERAN 22523258</p>
           </div>
         </div>
       </footer>
