@@ -583,6 +583,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
   const [newGalleryUrl, setNewGalleryUrl] = useState('');
 
   const birdStatuses = ['Migran', 'Endemik', 'Dilindungi', 'Rentan', 'Langka'];
+  const attractionCategories = ['Ekowisata', 'Petualangan', 'Rekreasi'];
 
   useEffect(() => {
     refreshData();
@@ -766,6 +767,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   <div className="flex gap-4">
                     <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest">{item.price || item.priceRange || item.scientific}</p>
                     {item.galleryImages && <p className="text-emerald-500 text-[10px] uppercase font-black tracking-widest ml-2">📸 {item.galleryImages.length} Foto</p>}
+                    {item.category && <p className="text-sky-500 text-[10px] uppercase font-black tracking-widest ml-2">🏷️ {item.category}</p>}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -809,6 +811,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Nama / Judul</label>
                   <input className="w-full bg-slate-800 p-5 rounded-2xl outline-none border border-white/5 focus:ring-2 focus:ring-emerald-500" value={editingItem.title || editingItem.name} placeholder="Contoh: Mangrove Wanatirta" onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'title' : 'name']: e.target.value})} required />
                 </div>
+
+                {activeTab === 'attractions' && (
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Kategori Wisata</label>
+                    <div className="flex gap-2">
+                      {attractionCategories.map(cat => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() => setEditingItem({ ...editingItem, category: cat })}
+                          className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase border transition-all ${editingItem.category === cat ? 'bg-sky-600 border-sky-500 text-white shadow-lg shadow-sky-900/40' : 'bg-slate-800 border-white/10 text-slate-500'}`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {(activeTab === 'attractions' || activeTab === 'umkm') && (
                   <div className="space-y-2">
@@ -887,3 +907,4 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
