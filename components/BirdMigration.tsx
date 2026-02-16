@@ -60,27 +60,27 @@
 //     <section id="burung" className="py-24 bg-sky-50 scroll-mt-24 overflow-hidden" aria-labelledby="bird-title">
 //       <div className="container mx-auto px-6">
 //         {/* Header Section */}
-//         <div className="flex flex-col lg:flex-row items-end justify-between gap-12 mb-20">
-//           <div className="lg:w-2/3">
-//             <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg shadow-sky-200">
-//               Kawasan Ekosistem Esensial (KEE)
-//             </span>
-//             <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none mb-8">
-//               Saksi Bisu <br/>
-//               <span className="text-sky-700 italic">Lintas Benua</span>
-//             </h2>
-//             <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
-//               Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
-//             </p>
-//           </div>
-//           <div className="hidden lg:block">
-//             <div className="w-32 h-32 border-2 border-sky-200 rounded-full flex items-center justify-center animate-spin-slow">
-//                <svg className="w-20 h-20 text-sky-400 opacity-30" fill="currentColor" viewBox="0 0 24 24">
-//                   <path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.47c-.31.17-.69.17-1 0l-7.97-4.47c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.47c.31-.17.69-.17 1 0l7.97 4.47c.32.17.53.5.53.88v9z"/>
-//                </svg>
-//             </div>
-//           </div>
-//         </div>
+        // <div className="flex flex-col lg:flex-row items-end justify-between gap-12 mb-20">
+        //   <div className="lg:w-2/3">
+        //     <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg shadow-sky-200">
+        //       Kawasan Ekosistem Esensial (KEE)
+        //     </span>
+        //     <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none mb-8">
+        //       Saksi Bisu <br/>
+        //       <span className="text-sky-700 italic">Lintas Benua</span>
+        //     </h2>
+        //     <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
+        //       Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+        //     </p>
+        //   </div>
+        //   <div className="hidden lg:block">
+        //     <div className="w-32 h-32 border-2 border-sky-200 rounded-full flex items-center justify-center animate-spin-slow">
+        //        <svg className="w-20 h-20 text-sky-400 opacity-30" fill="currentColor" viewBox="0 0 24 24">
+        //           <path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.47c-.31.17-.69.17-1 0l-7.97-4.47c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.47c.31-.17.69-.17 1 0l7.97 4.47c.32.17.53.5.53.88v9z"/>
+        //        </svg>
+        //     </div>
+        //   </div>
+        // </div>
 
 //         {/* Gallery Grid */}
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
@@ -232,16 +232,26 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
   return (
     <section id="burung" className="py-24 bg-sky-50 scroll-mt-24" aria-labelledby="bird-title">
       <div className="container mx-auto px-6">
-        <div className="mb-20">
-          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg">
-            Kawasan Ekosistem Esensial
-          </span>
-          <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">
-            Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span>
-          </h2>
-           <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
-//               Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
-//             </p>
+           <div className="flex flex-col lg:flex-row items-end justify-between gap-12 mb-20">
+          <div className="lg:w-2/3">
+            <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg shadow-sky-200">
+              Kawasan Ekosistem Esensial (KEE)
+            </span>
+            <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none mb-8">
+              Saksi Bisu <br/>
+              <span className="text-sky-700 italic">Lintas Benua</span>
+            </h2>
+            <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
+              Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+            </p>
+          </div>
+          <div className="hidden lg:block">
+            <div className="w-32 h-32 border-2 border-sky-200 rounded-full flex items-center justify-center animate-spin-slow">
+               <svg className="w-20 h-20 text-sky-400 opacity-30" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.47c-.31.17-.69.17-1 0l-7.97-4.47c-.32-.17-.53-.5-.53-.88v-9c0-.38.21-.71.53-.88l7.97-4.47c.31-.17.69-.17 1 0l7.97 4.47c.32.17.53.5.53.88v9z"/>
+               </svg>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
