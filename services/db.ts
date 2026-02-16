@@ -514,6 +514,7 @@
 
 
 
+
 import { createClient } from '@supabase/supabase-js';
 import { AttractionDetail, UMKM } from '../types';
 import { initialContent } from '../content';
@@ -522,6 +523,8 @@ const SUPABASE_URL = 'https://iedvynwjbxqnmuoaghza.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_R60kdpUqUMui8qzZLmj8Fw_7k5kPsZH';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const LOGO_ID = 'SITE_CONFIG_LOGO'; // ID khusus untuk menyimpan logo di tabel attractions
 
 export interface MigratoryBird {
   id: string;
@@ -597,9 +600,7 @@ export const db = {
       if (cleanBirds.length > 0) await supabase.from('birds').upsert(cleanBirds);
       
       if (contact) {
-        // Pisahkan logoUrl agar tidak menyebabkan error kolom pada tabel settings
-        const { logoUrl, ...supabaseData } = contact;
-        await supabase.from('settings').upsert({ id: 1, ...supabaseData });
+        await db.saveContact(contact);
       }
 
       return { success: true, message: 'Sinkronisasi Berhasil!' };
@@ -609,39 +610,61 @@ export const db = {
   },
 
   getContact: async (): Promise<ContactConfig> => {
-    // 1. Ambil data teks dari Cloud
-    const { data: cloudData, error } = await supabase.from('settings').select('*').eq('id', 1).single();
-    
-    // 2. Ambil logo dari Local Storage
-    const localData = getLocal('contact') || initialContent.contact;
+    try {
+      // 1. Ambil data teks dari Cloud Settings
+      const { data: cloudSettings } = await supabase.from('settings').select('*').eq('id', 1).single();
+      
+      // 2. Ambil data logo dari "Virtual Record" di tabel Attractions
+      const { data: logoRecord } = await supabase.from('attractions').select('imageUrl').eq('id', LOGO_ID).single();
 
-    if (!error && cloudData) {
-      // Gabungkan data cloud (teks) dengan data lokal (logo)
-      return { ...cloudData, logoUrl: localData.logoUrl };
+      const baseContact = cloudSettings || getLocal('contact') || initialContent.contact;
+      
+      return {
+        ...baseContact,
+        logoUrl: logoRecord?.imageUrl || getLocal('contact')?.logoUrl
+      };
+    } catch (e) {
+      return getLocal('contact') || initialContent.contact;
     }
-    return localData;
   },
   
   saveContact: async (contact: ContactConfig) => {
-    // 1. Simpan konfigurasi lengkap (termasuk logo) ke Local Storage
+    // Simpan Lokal sebagai fallback
     setLocal('contact', contact);
 
-    // 2. Siapkan data untuk Supabase (tanpa logoUrl)
-    const { logoUrl, ...supabasePayload } = contact;
+    const { logoUrl, ...textData } = contact;
 
-    // 3. Update data teks ke Cloud
-    const { error } = await supabase.from('settings').upsert({ id: 1, ...supabasePayload });
+    // 1. Simpan Teks ke Tabel Settings (Tanpa Kolom logoUrl)
+    const { error: textError } = await supabase.from('settings').upsert({ id: 1, ...textData });
     
-    // Jika ada error (misal karena skema), kita tetap biarkan aplikasi jalan karena data sudah masuk localStorage
-    if (error) {
-      console.warn("Sinkronisasi Cloud Gagal (Logo tetap tersimpan secara lokal):", error.message);
+    // 2. Simpan Logo ke Tabel Attractions menggunakan ID khusus
+    if (logoUrl) {
+      const { error: logoError } = await supabase.from('attractions').upsert({
+        id: LOGO_ID,
+        title: 'SYSTEM_LOGO',
+        imageUrl: logoUrl,
+        category: 'SYSTEM',
+        description: 'Site Logo Storage',
+        tagline: 'Internal',
+        fullDescription: 'Internal storage for site logo to bypass schema limitations'
+      });
+      if (logoError) console.error("Gagal simpan logo ke Cloud:", logoError.message);
     }
+
+    if (textError) throw textError;
   },
 
   getAttractions: async (): Promise<AttractionDetail[]> => {
-    const { data, error } = await supabase.from('attractions').select('*').order('id', { ascending: true });
+    // Saring agar LOGO_ID tidak muncul di list wisata
+    const { data, error } = await supabase
+      .from('attractions')
+      .select('*')
+      .neq('id', LOGO_ID)
+      .order('id', { ascending: true });
+
     if (!error && data && data.length > 0) return data;
-    return getLocal('attractions') || initialContent.attractions;
+    const local = getLocal('attractions') || initialContent.attractions;
+    return local.filter((a: any) => a.id !== LOGO_ID);
   },
 
   saveAttraction: async (attraction: AttractionDetail) => {
@@ -697,3 +720,4 @@ export const db = {
     setLocal('birds', await db.getBirds());
   }
 };
+

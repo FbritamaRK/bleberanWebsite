@@ -219,7 +219,6 @@
 // export default BirdMigration;
 
 
-
 import React, { useState } from 'react';
 import { MigratoryBird } from '../services/db';
 
@@ -234,13 +233,21 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
     <section id="burung" className="py-24 bg-sky-50 scroll-mt-24" aria-labelledby="bird-title">
       <div className="container mx-auto px-6">
         <div className="mb-20">
-          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg">Kawasan Ekosistem Esensial</span>
-          <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span></h2>
+          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg">
+            Kawasan Ekosistem Esensial
+          </span>
+          <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">
+            Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {birdList.map((bird) => (
-            <div key={bird.id} onClick={() => setSelectedBird(bird)} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-sky-100 hover:-translate-y-4 transition-all duration-500 cursor-pointer flex flex-col h-full">
+            <div 
+              key={bird.id} 
+              onClick={() => setSelectedBird(bird)} 
+              className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-sky-100 hover:-translate-y-4 transition-all duration-500 cursor-pointer flex flex-col h-full"
+            >
               <div className="h-64 overflow-hidden relative">
                 <img src={bird.image} alt={bird.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute bottom-4 left-4 flex flex-wrap gap-1">
@@ -260,17 +267,33 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
         </div>
       </div>
 
+      {/* Logic Fix: Wrapped multiple elements in a Fragment <> </> */}
       {selectedBird && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-xl" onClick={() => setSelectedBird(null)}></div>
-          <div className="bg-white w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl relative z-10 p-10 border border-white/20">
-            <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8 text-slate-400 hover:text-rose-600 transition-colors">❌</button>
-            <h3 className="text-4xl font-serif text-slate-900 mb-2">{selectedBird.name}</h3>
-            <p className="text-sky-600 italic font-bold mb-6 text-sm">{selectedBird.scientific}</p>
-            <div className="w-full h-[1px] bg-slate-100 mb-6"></div>
-            <p className="text-slate-700 text-lg leading-relaxed font-medium">{selectedBird.description}</p>
+        <>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-xl" onClick={() => setSelectedBird(null)}></div>
+            <div className="bg-white w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl relative z-10 p-10 border border-white/20">
+              <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8 text-slate-400 hover:text-rose-600 transition-colors">❌</button>
+              <h3 className="text-4xl font-serif text-slate-900 mb-2">{selectedBird.name}</h3>
+              <p className="text-sky-600 italic font-bold mb-6 text-sm">{selectedBird.scientific}</p>
+              <div className="w-full h-[1px] bg-slate-100 mb-6"></div>
+              <p className="text-slate-700 text-lg leading-relaxed font-medium">{selectedBird.description}</p>
+              
+              {/* If you wanted the documentation footer inside the modal, it should go here */}
+              <div className="mt-12 pt-10 border-t border-slate-100 flex items-center gap-5">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-wider leading-relaxed text-slate-900">
+                    Kawasan Ekosistem Esensial Banaran
+                  </p>
+                  <p className="text-[9px] text-slate-400 font-medium">Data hasil dokumentasi pengamat burung yang dikumpulkan melalui website eBird oleh Tim KKN untuk upaya konservasi habitat pesisir berkelanjutan.</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </section>
   );
