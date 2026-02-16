@@ -351,6 +351,7 @@
 //---//
 
 
+
 import { createClient } from '@supabase/supabase-js';
 import { AttractionDetail, UMKM } from '../types';
 import { initialContent } from '../content';
@@ -364,8 +365,8 @@ export interface MigratoryBird {
   id: string;
   name: string;
   scientific: string;
-  desc: string;
-  image: string;
+  description: string; // Diubah dari desc ke description
+  imageUrl: string;    // Diubah dari image ke imageUrl
   status?: string;
 }
 
@@ -382,8 +383,8 @@ const initialBirds: MigratoryBird[] = [
     name: 'Cerek Jawa',
     scientific: 'Charadrius javanicus',
     status: 'Endemik & Dilindungi',
-    desc: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
-    image: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
+    description: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
+    imageUrl: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
   }
 ];
 
@@ -399,7 +400,6 @@ const setLocal = (key: string, data: any) => {
 export const db = {
   isCloudEnabled: () => !!supabase,
 
-  // AKTIFKAN REALTIME: Pastikan "Enable Realtime" sudah dicentang di dashboard Supabase Anda
   subscribe: (callback: () => void) => {
     const channel = supabase.channel('schema-db-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'attractions' }, () => callback())
@@ -425,7 +425,7 @@ export const db = {
       if (birds.length > 0) await supabase.from('birds').upsert(birds);
       if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
 
-      return { success: true, message: 'Sinkronisasi Berhasil! Data di semua perangkat akan diperbarui otomatis.' };
+      return { success: true, message: 'Sinkronisasi Berhasil!' };
     } catch (error: any) {
       return { success: false, message: 'Gagal Sinkron: ' + error.message };
     }
@@ -443,7 +443,7 @@ export const db = {
   },
 
   getAttractions: async (): Promise<AttractionDetail[]> => {
-    const { data, error } = await supabase.from('attractions').select('*').order('created_at', { ascending: true });
+    const { data, error } = await supabase.from('attractions').select('*').order('id', { ascending: true });
     if (!error && data && data.length > 0) return data;
     return getLocal('attractions') || initialContent.attractions;
   },
@@ -460,7 +460,7 @@ export const db = {
   },
 
   getUMKM: async (): Promise<UMKM[]> => {
-    const { data, error } = await supabase.from('umkm').select('*').order('created_at', { ascending: true });
+    const { data, error } = await supabase.from('umkm').select('*').order('id', { ascending: true });
     if (!error && data && data.length > 0) return data;
     return getLocal('umkm') || initialContent.umkm;
   },
@@ -477,7 +477,7 @@ export const db = {
   },
 
   getBirds: async (): Promise<MigratoryBird[]> => {
-    const { data, error } = await supabase.from('birds').select('*').order('created_at', { ascending: true });
+    const { data, error } = await supabase.from('birds').select('*').order('id', { ascending: true });
     if (!error && data && data.length > 0) return data;
     return getLocal('birds') || initialBirds;
   },

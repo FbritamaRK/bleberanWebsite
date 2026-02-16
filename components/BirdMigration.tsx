@@ -220,6 +220,7 @@
 
 
 
+
 import React, { useState } from 'react';
 import { MigratoryBird } from '../services/db';
 
@@ -230,84 +231,33 @@ interface BirdMigrationProps {
 const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
   const [selectedBird, setSelectedBird] = useState<MigratoryBird | null>(null);
 
-  const conservationTips = [
-    {
-      title: 'Jaga Jarak Aman',
-      icon: '🔭',
-      desc: 'Gunakan binokular atau lensa tele. Jangan mendekat lebih dari 30 meter agar burung tidak merasa terancam.'
-    },
-    {
-      title: 'Bebaskan Plastik',
-      icon: '♻️',
-      desc: 'Sampah mikroplastik di muara sering tertelan oleh burung migran yang sedang mencari makan di lumpur.'
-    },
-    {
-      title: 'Jangan Beri Makan',
-      icon: '🚫',
-      desc: 'Biarkan burung mencari pakan alami di muara. Makanan manusia dapat mengganggu sistem pencernaan mereka.'
-    },
-    {
-      title: 'Senyap & Tenang',
-      icon: '🔇',
-      desc: 'Hindari suara keras atau gerakan tiba-tiba yang dapat membuat seluruh koloni terbang serentak karena stres.'
-    }
-  ];
-
   return (
-    <section id="burung" className="py-24 bg-sky-50 scroll-mt-24 overflow-hidden" aria-labelledby="bird-title">
+    <section id="burung" className="py-24 bg-sky-50 scroll-mt-24" aria-labelledby="bird-title">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row items-end justify-between gap-12 mb-20">
-          <div className="lg:w-2/3">
-            <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block shadow-lg">
-              Kawasan Ekosistem Esensial (KEE)
-            </span>
-            <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none mb-8">
-              Saksi Bisu <br/>
-              <span className="text-sky-700 italic">Lintas Benua</span>
-            </h2>
-          </div>
+        <div className="mb-20">
+          <span className="bg-sky-600 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block">Kawasan Ekosistem Esensial</span>
+          <h2 id="bird-title" className="text-4xl md:text-7xl font-serif text-slate-900 leading-none">Saksi Bisu <span className="text-sky-700 italic">Lintas Benua</span></h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {birdList.map((bird) => (
-            <div 
-              key={bird.id} 
-              onClick={() => setSelectedBird(bird)}
-              className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-sky-100 hover:border-sky-400 transition-all duration-700 hover:-translate-y-4 cursor-pointer flex flex-col h-full"
-            >
+            <div key={bird.id} onClick={() => setSelectedBird(bird)} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-sky-100 hover:-translate-y-4 transition-all duration-500 cursor-pointer flex flex-col h-full">
               <div className="h-64 overflow-hidden relative">
-                <img src={bird.image} alt={bird.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={bird.imageUrl} alt={bird.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute bottom-4 left-4 flex flex-wrap gap-1">
-                  {bird.status && bird.status.split(' | ').map((s, i) => (
-                    <span key={i} className="bg-white/90 backdrop-blur-md text-sky-900 px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm">
-                      {s}
-                    </span>
+                  {bird.status?.split(' | ').map((s, i) => (
+                    <span key={i} className="bg-white/90 backdrop-blur-md text-sky-900 px-2 py-0.5 rounded-md text-[8px] font-black uppercase">{s}</span>
                   ))}
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-1">
-                <h4 className="text-xl font-bold text-slate-900 mb-1">{bird.name}</h4>
-                <p className="text-sky-600 text-[10px] italic font-black uppercase tracking-widest mb-4">{bird.scientific}</p>
-                <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 font-medium mb-6 flex-1">{bird.desc}</p>
-                <button className="text-sky-700 text-[10px] font-black uppercase tracking-widest border-b-2 border-sky-200 group-hover:border-sky-700 transition-all pb-1 self-start">
-                  Detail Burung &rarr;
-                </button>
+                <h4 className="text-xl font-bold mb-1">{bird.name}</h4>
+                <p className="text-sky-600 text-[10px] italic font-black uppercase mb-4">{bird.scientific}</p>
+                <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-6 flex-1">{bird.description}</p>
+                <button className="text-sky-700 text-[10px] font-black uppercase border-b-2 border-sky-100 self-start">Detail Burung &rarr;</button>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="bg-sky-900 rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden">
-          <h3 className="text-3xl md:text-5xl font-serif mb-12 text-center">Cara Melindungi Sahabat Langit</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-            {conservationTips.map((tip, i) => (
-              <div key={i} className="flex flex-col items-center text-center">
-                <div className="text-4xl mb-4">{tip.icon}</div>
-                <h4 className="text-xl font-bold mb-3">{tip.title}</h4>
-                <p className="text-sky-100/60 text-sm leading-relaxed">{tip.desc}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -315,10 +265,10 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-xl" onClick={() => setSelectedBird(null)}></div>
           <div className="bg-white w-full max-w-xl rounded-[3rem] overflow-hidden shadow-2xl relative z-10 p-10">
-            <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8 text-slate-400 hover:text-rose-600 transition-all">❌</button>
-            <h3 className="text-4xl font-serif text-slate-900 mb-3">{selectedBird.name}</h3>
+            <button onClick={() => setSelectedBird(null)} className="absolute top-8 right-8">❌</button>
+            <h3 className="text-4xl font-serif text-slate-900 mb-2">{selectedBird.name}</h3>
             <p className="text-sky-600 italic font-bold mb-6">{selectedBird.scientific}</p>
-            <p className="text-slate-700 text-lg leading-relaxed">{selectedBird.desc}</p>
+            <p className="text-slate-700 text-lg leading-relaxed">{selectedBird.description}</p>
           </div>
         </div>
       )}
@@ -327,3 +277,4 @@ const BirdMigration: React.FC<BirdMigrationProps> = ({ birdList }) => {
 };
 
 export default BirdMigration;
+
