@@ -733,7 +733,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           ) : (
              <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center font-black text-2xl">B</div>
           )}
-          <div><h1 className="font-bold">Admin Banaran</h1></div>
+          <div><h1 className="font-bold">Admin Bleberan</h1></div>
         </div>
 
         <button onClick={handleGlobalSync} disabled={isSyncing} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-10 shadow-lg shadow-emerald-900/20 transition-all">
