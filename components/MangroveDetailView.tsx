@@ -77,7 +77,7 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
         {/* Hero Section */}
         <section className="relative h-[70vh] flex items-center overflow-hidden mb-24 bg-emerald-950">
            <img 
-             src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=2000" 
+             src="https://pesonapapua.com/wp-content/uploads/2025/03/pohon-mangrove-di-biak.jpeg" 
              className="absolute inset-0 w-full h-full object-cover opacity-30" 
              alt="Hutan Mangrove Banaran"
            />
