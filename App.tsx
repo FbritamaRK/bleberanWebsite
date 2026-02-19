@@ -132,8 +132,8 @@ export default function App() {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {[
-              { label: 'Area Konservasi', val: '12', sub: 'Hektar Mangrove', color: 'bg-emerald-500 shadow-emerald-200' },
-              { label: 'Armada Kapal', val: '15', sub: 'Wisata Air', color: 'bg-sky-500 shadow-sky-200' },
+              { label: 'Area Konservasi', val: '2+', sub: 'Hektar Mangrove', color: 'bg-emerald-500 shadow-emerald-200' },
+              { label: 'Armada Kapal', val: '1+', sub: 'Wisata Air', color: 'bg-sky-500 shadow-sky-200' },
               { label: 'Pengusaha Lokal', val: '10+', sub: 'UMKM Terdaftar', color: 'bg-orange-500 shadow-orange-200' },
               { label: 'Spesies Burung', val: '100+', sub: 'Kawasan KEE', color: 'bg-indigo-500 shadow-indigo-200' }
             ].map((s, i) => (

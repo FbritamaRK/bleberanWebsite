@@ -291,7 +291,7 @@ const BirdMigration: React.FC = () => {
               <span className="text-sky-700 italic">Lintas Benua</span>
             </h2>
             <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
-              Dusun Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+              Area Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dengan berbagai jenis dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
             </p>
           </div>
           <div className="hidden lg:block">
@@ -367,7 +367,7 @@ const BirdMigration: React.FC = () => {
                   <p className="text-white-200 text-sm font-bold uppercase tracking-wider">Lapor jika melihat aktivitas perburuan liar!</p>
                </div>
                <a 
-                 href="https://wa.me/6281234567890?text=Halo,%20saya%20ingin%20melaporkan/bertanya%20terkait%20konservasi%20burung%20di%20Banaran."
+                 href="https://wa.me/6285747537795?text=Halo,%20saya%20ingin%20melaporkan/bertanya%20terkait%20konservasi%20burung%20di%20Banaran."
                  target="_blank"
                  rel="noopener noreferrer"
                  className="bg-sky-400 hover:bg-white text-sky-950 px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-2xl"
