@@ -209,7 +209,7 @@ export default function App() {
           </div>
           
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
-            <p>&copy; 2024 Tim KKN-PPM UGM/UNY Dusun Banaran</p>
+            <p>&copy; 2026 KKN UII 72 Dusun Bleberan - 22523258</p>
           </div>
         </div>
       </footer>
