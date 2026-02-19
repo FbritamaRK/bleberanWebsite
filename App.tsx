@@ -134,7 +134,7 @@ export default function App() {
             {[
               { label: 'Area Konservasi', val: '12', sub: 'Hektar Mangrove', color: 'bg-emerald-500 shadow-emerald-200' },
               { label: 'Armada Kapal', val: '15', sub: 'Wisata Air', color: 'bg-sky-500 shadow-sky-200' },
-              { label: 'Pengusaha Lokal', val: '50+', sub: 'UMKM Terdaftar', color: 'bg-orange-500 shadow-orange-200' },
+              { label: 'Pengusaha Lokal', val: '10+', sub: 'UMKM Terdaftar', color: 'bg-orange-500 shadow-orange-200' },
               { label: 'Spesies Burung', val: '100+', sub: 'Kawasan KEE', color: 'bg-indigo-500 shadow-indigo-200' }
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center text-center">

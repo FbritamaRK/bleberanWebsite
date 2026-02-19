@@ -54,7 +54,7 @@ export const initialContent: SiteConfig = {
     },
     {
       id: '3',
-      title: 'Camping Ground Banaran',
+      title: 'Camping Ground Bleberan',
       tagline: 'Malam Syahdu di Tepi Sungai',
       description: 'Rasakan kedamaian bermalam di bawah bintang-bintang dengan udara pesisir yang sejuk.',
       fullDescription: 'Lepaskan penat dari hiruk-pikuk kota dengan berkemah di tepi sungai Banaran. Area camping kami menawarkan tanah lapang yang rata dengan rumput hijau dan akses mudah ke fasilitas air bersih.',
@@ -62,7 +62,7 @@ export const initialContent: SiteConfig = {
       galleryImages: [
         'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=1200'
       ],
-      features: ['Area Api Unggun Mandiri', 'Fasilitas Toilet Bersih', 'Sewa Peralatan Tenda'],
+      features: ['Area Api Unggun', 'Fasilitas Toilet Bersih', 'Tenda dan Peralatan'],
       bestTime: 'Check-in: 16:00 WIB',
       category: 'Rekreasi',
       price: 'Rp 35.000 / spot tenda',
