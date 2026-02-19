@@ -178,7 +178,7 @@ export default function App() {
                    <div className="w-14 h-14 bg-emerald-50 text-white rounded-2xl flex items-center justify-center font-black text-3xl">B</div>
                 )}
                 <div>
-                  <h5 className="text-3xl font-serif font-bold tracking-tight">Pesona Banaran</h5>
+                  <h5 className="text-3xl font-serif font-bold tracking-tight">Pesona Bleberan</h5>
                   <p className="text-emerald-400 text-[10px] font-black tracking-[0.4em] uppercase">Kawasan Ekosistem Esensial</p>
                 </div>
               </div>
