@@ -61,13 +61,13 @@ const MangroveDetailView: React.FC<MangroveDetailViewProps> = ({ onBack }) => {
             <span>Kembali Ke Beranda</span>
           </button>
           <div className="flex items-center space-x-2">
-             <div className="w-8 h-8 bg-white-600 rounded-lg flex items-center justify-center text-white font-black text-xs">
+             {/* <div className="w-8 h-8 bg-white-600 rounded-lg flex items-center justify-center text-white font-black text-xs">
                    <img 
               src="logo/bleberan2.png" 
               alt="Logo Dusun Bleberan"
               className="w-full h-full object-contain"
             />
-                </div>
+                </div> */}
              <span className="hidden sm:inline text-[10px] font-black uppercase tracking-widest text-emerald-900">Edukasi Konservasi</span>
           </div>
         </div>
