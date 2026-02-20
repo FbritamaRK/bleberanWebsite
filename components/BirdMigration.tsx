@@ -291,7 +291,7 @@ const BirdMigration: React.FC = () => {
               <span className="text-sky-700 italic">Lintas Benua</span>
             </h2>
             <p className="text-slate-700 text-xl leading-relaxed max-w-2xl font-medium">
-              Area Banaran dan Muara Trisik adalah jalur singgah (stopover) krusial bagi ribuan burung dengan berbagai jenis dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia.
+              Area Banaran dan Muara Trisik merupakan salah satu jalur singgah (stopover) krusial bagi berbagai jenis burung migran dari belahan bumi utara sebelum melanjutkan perjalanan ke Australia. Selain itu, area ini juga merupakan tempat tinggal berbagai jenis burung endemik dari Indonesia.
             </p>
           </div>
           <div className="hidden lg:block">
