@@ -33,7 +33,7 @@ const UMKMSection: React.FC<UMKMSectionProps> = ({ umkmList, onNavigateDetail })
                 <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="text-2xl font-bold text-white">{item.name}</h4>
-                    <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border border-white/10">Produk Lokal</span>
+                    <span className="bg-red-500 backdrop-blur-md px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border border-white/10">Produk Lokal</span>
                   </div>
                   <p className="text-emerald-50 text-sm mb-6 line-clamp-2 leading-relaxed font-medium">
                     {item.description}
