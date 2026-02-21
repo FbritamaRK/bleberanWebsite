@@ -563,6 +563,7 @@
 
 
 
+
 import React, { useState, useEffect } from 'react';
 import { db, MigratoryBird, ContactConfig } from '../services/db';
 import { AttractionDetail, UMKM } from '../types';
@@ -622,7 +623,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     if (result.success) refreshData();
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'item' | 'settings') => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'item' | 'settings' | 'gallery') => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 1.5 * 1024 * 1024) {
@@ -635,6 +636,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
       if (target === 'item') {
         const field = activeTab === 'birds' ? 'image' : 'imageUrl';
         setEditingItem({ ...editingItem, [field]: dataUrl });
+      } else if (target === 'gallery') {
+        const currentGallery = editingItem.galleryImages || [];
+        setEditingItem({
+          ...editingItem,
+          galleryImages: [...currentGallery, dataUrl]
+        });
       } else {
         setContact(prev => prev ? { ...prev, logoUrl: dataUrl } : null);
       }
@@ -733,7 +740,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           ) : (
              <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center font-black text-2xl">B</div>
           )}
-          <div><h1 className="font-bold">Admin Bleberan</h1></div>
+          <div><h1 className="font-bold">Admin Banaran</h1></div>
         </div>
 
         <button onClick={handleGlobalSync} disabled={isSyncing} className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-[10px] font-black uppercase tracking-widest mb-10 shadow-lg shadow-emerald-900/20 transition-all">
@@ -742,10 +749,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
         <nav className="flex-1 space-y-2">
           {[
-            { id: 'attractions', label: 'Wisata', icon: '📍' },
-            { id: 'umkm', label: 'UMKM', icon: '🛍️' },
-            { id: 'birds', label: 'Burung', icon: '🐦' },
-            { id: 'settings', label: 'Setting', icon: '⚙️' }
+            { id: 'attractions', label: '📍 Wisata', icon: '📍' },
+            { id: 'umkm', label: '🛍️ UMKM', icon: '🛍️' },
+            { id: 'birds', label: '🐦 Burung', icon: '🐦' },
+            { id: 'settings', label: '⚙️ Setting', icon: '⚙️' }
           ].map(tab => (
             <button 
               key={tab.id} 
@@ -939,6 +946,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   <div className="space-y-4">
                     <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Galeri Visual (Carousel)</label>
                     <div className="flex gap-2">
+                      <div className="relative w-12 h-12 bg-slate-800 rounded-xl border border-white/5 flex items-center justify-center group cursor-pointer overflow-hidden shrink-0">
+                        <span className="text-lg group-hover:scale-110 transition-transform">📁</span>
+                        <input 
+                          type="file" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          accept="image/*" 
+                          onChange={(e) => handleFileUpload(e, 'gallery')} 
+                        />
+                      </div>
                       <input 
                         className="flex-1 bg-slate-800 p-4 rounded-xl outline-none border border-white/5 text-xs" 
                         value={newGalleryUrl} 
@@ -983,6 +999,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
 
 
 
