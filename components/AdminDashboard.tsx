@@ -564,9 +564,10 @@
 
 
 
+
 import React, { useState, useEffect } from 'react';
 import { db, MigratoryBird, ContactConfig } from '../services/db';
-import { AttractionDetail, UMKM } from '../types';
+import { AttractionDetail, UMKM, CommunityActivity } from '../types';
 
 interface AdminDashboardProps {
   onBack: () => void;
@@ -574,10 +575,11 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'attractions' | 'umkm' | 'birds' | 'settings'>('attractions');
+  const [activeTab, setActiveTab] = useState<'attractions' | 'umkm' | 'birds' | 'activities' | 'settings'>('attractions');
   const [attractions, setAttractions] = useState<AttractionDetail[]>([]);
   const [umkmList, setUmkmList] = useState<UMKM[]>([]);
   const [birds, setBirds] = useState<MigratoryBird[]>([]);
+  const [activities, setActivities] = useState<CommunityActivity[]>([]);
   const [contact, setContact] = useState<ContactConfig | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -597,16 +599,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
   const refreshData = async () => {
     setIsLoading(true);
     try {
-      const [attrData, umkmData, birdData, contactData] = await Promise.all([
+      const [attrData, umkmData, birdData, contactData, activityData] = await Promise.all([
         db.getAttractions(),
         db.getUMKM(),
         db.getBirds(),
-        db.getContact()
+        db.getContact(),
+        db.getActivities()
       ]);
       setAttractions(attrData);
       setUmkmList(umkmData);
       setBirds(birdData);
       setContact(contactData);
+      setActivities(activityData);
     } catch (e) {
       console.error(e);
     } finally {
@@ -682,6 +686,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     if (activeTab === 'attractions') await db.deleteAttraction(id);
     if (activeTab === 'umkm') await db.deleteUMKM(id);
     if (activeTab === 'birds') await db.deleteBird(id);
+    if (activeTab === 'activities') await db.deleteActivity(id);
     await refreshData();
   };
 
@@ -691,6 +696,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     try {
       if (activeTab === 'attractions') await db.saveAttraction(editingItem);
       if (activeTab === 'umkm') await db.saveUMKM(editingItem);
+      if (activeTab === 'activities') await db.saveActivity(editingItem);
       if (activeTab === 'birds') {
         const birdData: MigratoryBird = {
           id: editingItem.id,
@@ -729,6 +735,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
     if (activeTab === 'attractions') setEditingItem({ id, title: '', tagline: '', description: '', fullDescription: '', imageUrl: '', features: [], tips: [], category: 'Ekowisata', bestTime: '', galleryImages: [], price: 'Rp 0' });
     if (activeTab === 'umkm') setEditingItem({ id, name: '', description: '', imageUrl: '', priceRange: 'Rp 0', whatsapp: '' });
     if (activeTab === 'birds') setEditingItem({ id, name: '', scientific: '', status: '', description: '', image: '' });
+    if (activeTab === 'activities') setEditingItem({ id, title: '', description: '', imageUrl: '', galleryImages: [], date: '' });
   };
 
   return (
@@ -749,10 +756,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 
         <nav className="flex-1 space-y-2">
           {[
-            { id: 'attractions', label: 'Wisata', icon: '📍' },
-            { id: 'umkm', label: 'UMKM', icon: '🛍️' },
-            { id: 'birds', label: 'Burung', icon: '🐦' },
-            { id: 'settings', label: 'Setting', icon: '⚙️' }
+            { id: 'attractions', label: '📍 Wisata', icon: '📍' },
+            { id: 'activities', label: '🤝 Kegiatan', icon: '🤝' },
+            { id: 'umkm', label: '🛍️ UMKM', icon: '🛍️' },
+            { id: 'birds', label: '🐦 Burung', icon: '🐦' },
+            { id: 'settings', label: '⚙️ Setting', icon: '⚙️' }
           ].map(tab => (
             <button 
               key={tab.id} 
@@ -775,7 +783,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           <div>
             <p className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Manajemen Konten</p>
             <h2 className="text-4xl font-serif font-bold">
-              {activeTab === 'attractions' ? 'Destinasi Wisata' : activeTab === 'umkm' ? 'Produk Lokal' : activeTab === 'birds' ? 'Database Burung' : 'Pengaturan Umum'}
+              {activeTab === 'attractions' ? 'Destinasi Wisata' : activeTab === 'activities' ? 'Kegiatan Masyarakat' : activeTab === 'umkm' ? 'Produk Lokal' : activeTab === 'birds' ? 'Database Burung' : 'Pengaturan Umum'}
             </h2>
           </div>
           {activeTab !== 'settings' && (
@@ -827,7 +835,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {(activeTab === 'attractions' ? attractions : activeTab === 'umkm' ? umkmList : birds).map((item: any) => (
+            {(activeTab === 'attractions' ? attractions : activeTab === 'activities' ? activities : activeTab === 'umkm' ? umkmList : birds).map((item: any) => (
               <div key={item.id} className="bg-slate-900/40 border border-white/5 p-6 rounded-[2.5rem] flex items-center gap-8 group hover:bg-slate-900 transition-all">
                 <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-800 shrink-0">
                   <img src={item.imageUrl || item.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
@@ -900,14 +908,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
                   </div>
                 )}
 
-                {(activeTab === 'attractions' || activeTab === 'umkm') && (
+                {(activeTab === 'attractions' || activeTab === 'activities' || activeTab === 'umkm') && (
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Harga / Biaya</label>
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-2">
+                      {activeTab === 'activities' ? 'Tanggal / Waktu' : 'Harga / Biaya'}
+                    </label>
                     <input 
                       className="w-full bg-emerald-900/20 text-emerald-400 p-5 rounded-2xl outline-none border border-emerald-500/20 focus:ring-2 focus:ring-emerald-500 font-bold" 
-                      value={activeTab === 'attractions' ? editingItem.price : editingItem.priceRange} 
-                      placeholder="Contoh: Rp 10.000 / orang" 
-                      onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'price' : 'priceRange']: e.target.value})} 
+                      value={activeTab === 'attractions' ? editingItem.price : activeTab === 'activities' ? editingItem.date : editingItem.priceRange} 
+                      placeholder={activeTab === 'activities' ? "Contoh: Setiap Minggu Pagi" : "Contoh: Rp 10.000 / orang"} 
+                      onChange={e => setEditingItem({...editingItem, [activeTab === 'attractions' ? 'price' : activeTab === 'activities' ? 'date' : 'priceRange']: e.target.value})} 
                       required 
                     />
                   </div>
@@ -942,7 +952,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
               </div>
 
               <div className="space-y-6">
-                {activeTab === 'attractions' && (
+                {(activeTab === 'attractions' || activeTab === 'activities') && (
                   <div className="space-y-4">
                     <label className="text-[9px] font-black uppercase text-slate-500 ml-2">Galeri Visual (Carousel)</label>
                     <div className="flex gap-2">
@@ -999,6 +1009,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBack, onLogout }) => 
 };
 
 export default AdminDashboard;
+
 
 
 

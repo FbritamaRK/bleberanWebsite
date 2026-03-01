@@ -41,7 +41,7 @@ const MangroveEducation: React.FC<MangroveEducationProps> = ({ onExploreDetail }
             Mengapa <span className="text-emerald-600 italic">Mangrove</span> Sangat Penting?
           </h2>
           <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Di Dusun Banaran, kita tidak hanya berwisata, tapi juga menjaga warisan alam untuk masa depan anak cucu kita.
+            Di Dusun Bleberan, kita tidak hanya berwisata, tapi juga menjaga warisan alam untuk masa depan anak cucu kita.
           </p>
         </div>
 

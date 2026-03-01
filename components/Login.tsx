@@ -37,7 +37,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onBack, logoUrl }) => {
               )}
             </div>
             <h1 className="text-2xl font-serif font-bold text-white">Login Administrator</h1>
-            <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-black mt-2">Dusun Banaran</p>
+            <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-black mt-2">Dusun Bleberan</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,7 +73,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onBack, logoUrl }) => {
         </div>
         
         <p className="text-center mt-8 text-slate-600 text-[10px] font-medium leading-relaxed">
-          Gunakan password yang telah ditentukan oleh tim IT KKN Dusun Banaran untuk melakukan manajemen konten.
+          Gunakan password yang telah ditentukan oleh tim IT KKN Dusun Bleberan untuk melakukan manajemen konten.
         </p>
       </div>
     </div>

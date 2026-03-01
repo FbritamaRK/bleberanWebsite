@@ -101,7 +101,7 @@ const UMKMDetailView: React.FC<UMKMDetailViewProps> = ({ data, onBack }) => {
              </div>
              <div>
                <p className="text-[10px] font-black uppercase tracking-wider leading-relaxed text-slate-900">
-                 Ekonomi Kreatif Dusun Banaran
+                 Ekonomi Kreatif Dusun Bleberan
                </p>
                <p className="text-[9px] text-slate-400 font-medium">
                  Produk ini merupakan hasil karya warga lokal Banaran Galur. Dengan membeli produk ini, Anda turut mendukung pemberdayaan masyarakat dan pelestarian budaya pesisir Kulon Progo.

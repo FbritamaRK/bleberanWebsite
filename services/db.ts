@@ -1,522 +1,6 @@
 
-// import { createClient } from '@supabase/supabase-js';
-// import { AttractionDetail, UMKM } from '../types';
-// import { initialContent } from '../content';
-
-// /**
-//  * ============================================================
-//  * 🛠️ KONFIGURASI DATABASE SUPABASE (GO LIVE)
-//  * ============================================================
-//  * 1. Buat akun di supabase.com
-//  * 2. Buat Project Baru (Banaran)
-//  * 3. Buka Project Settings -> API
-//  * 4. Salin 'Project URL' dan 'anon public' key ke bawah ini:
-//  * ============================================================
-//  */
-// const SUPABASE_URL = 'https://iedvynwjbxqnmuoaghza.supabase.co'; 
-// const SUPABASE_ANON_KEY = 'sb_publishable_R60kdpUqUMui8qzZLmj8Fw_7k5kPsZH';
-
-// const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('YOUR_PROJECT_ID');
-
-// export const supabase = isConfigured 
-//   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-//   : null;
-
-// export interface MigratoryBird {
-//   id: string;
-//   name: string;
-//   scientific: string;
-//   desc: string;
-//   image: string;
-//   status?: string;
-// }
-
-// export interface ContactConfig {
-//   phone: string;
-//   email: string;
-//   address: string;
-//   whatsappNumber: string;
-// }
-
-// const initialBirds: MigratoryBird[] = [
-//   {
-//     id: 'b1',
-//     name: 'Cerek Jawa',
-//     scientific: 'Charadrius javanicus',
-//     status: 'Endemik & Dilindungi',
-//     desc: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
-//     image: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
-//   }
-// ];
-
-// // Helper untuk LocalStorage
-// const getLocal = (key: string) => {
-//   const saved = localStorage.getItem(`banaran_${key}`);
-//   return saved ? JSON.parse(saved) : null;
-// };
-
-// const setLocal = (key: string, data: any) => {
-//   localStorage.setItem(`banaran_${key}`, JSON.stringify(data));
-// };
-
-// export const db = {
-//   isCloudEnabled: () => !!supabase,
-
-//   // Fungsi khusus untuk migrasi data dari lokal ke cloud
-//   syncLocalToCloud: async () => {
-//     if (!supabase) return { success: false, message: 'Kunci Supabase belum dikonfigurasi.' };
-
-//     try {
-//       const attractions = getLocal('attractions') || [];
-//       const umkm = getLocal('umkm') || [];
-//       const birds = getLocal('birds') || [];
-//       const contact = getLocal('contact');
-
-//       if (attractions.length > 0) await supabase.from('attractions').upsert(attractions);
-//       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
-//       if (birds.length > 0) await supabase.from('birds').upsert(birds);
-//       if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
-
-//       return { success: true, message: 'Semua data lokal berhasil diunggah ke Cloud!' };
-//     } catch (error: any) {
-//       console.error('Sync Error:', error);
-//       return { success: false, message: error.message };
-//     }
-//   },
-
-//   getContact: async (): Promise<ContactConfig> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('settings').select('*').single();
-//         if (!error && data) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('contact') || initialContent.contact;
-//   },
-  
-//   saveContact: async (contact: ContactConfig) => {
-//     setLocal('contact', contact);
-//     if (supabase) await supabase.from('settings').upsert({ id: 1, ...contact });
-//   },
-
-//   getAttractions: async (): Promise<AttractionDetail[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('attractions').select('*');
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('attractions') || initialContent.attractions;
-//   },
-
-//   saveAttraction: async (attraction: AttractionDetail) => {
-//     const list = await db.getAttractions();
-//     const newList = list.some(a => a.id === attraction.id)
-//       ? list.map(a => a.id === attraction.id ? attraction : a)
-//       : [...list, attraction];
-//     setLocal('attractions', newList);
-//     if (supabase) await supabase.from('attractions').upsert(attraction);
-//   },
-
-//   deleteAttraction: async (id: string) => {
-//     const list = await db.getAttractions();
-//     setLocal('attractions', list.filter(a => a.id !== id));
-//     if (supabase) await supabase.from('attractions').delete().eq('id', id);
-//   },
-
-//   getUMKM: async (): Promise<UMKM[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('umkm').select('*');
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('umkm') || initialContent.umkm;
-//   },
-
-//   saveUMKM: async (item: UMKM) => {
-//     const list = await db.getUMKM();
-//     const newList = list.some(u => u.id === item.id)
-//       ? list.map(u => u.id === item.id ? item : u)
-//       : [...list, item];
-//     setLocal('umkm', newList);
-//     if (supabase) await supabase.from('umkm').upsert(item);
-//   },
-
-//   deleteUMKM: async (id: string) => {
-//     const list = await db.getUMKM();
-//     setLocal('umkm', list.filter(u => u.id !== id));
-//     if (supabase) await supabase.from('umkm').delete().eq('id', id);
-//   },
-
-//   getBirds: async (): Promise<MigratoryBird[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('birds').select('*');
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('birds') || initialBirds;
-//   },
-
-//   saveBird: async (bird: MigratoryBird) => {
-//     const list = await db.getBirds();
-//     const newList = list.some(b => b.id === bird.id)
-//       ? list.map(b => b.id === bird.id ? bird : b)
-//       : [...list, bird];
-//     setLocal('birds', newList);
-//     if (supabase) await supabase.from('birds').upsert(bird);
-//   },
-
-//   deleteBird: async (id: string) => {
-//     const list = await db.getBirds();
-//     setLocal('birds', list.filter(b => b.id !== id));
-//     if (supabase) await supabase.from('birds').delete().eq('id', id);
-//   }
-// };
-   
-//-----///
-
-// import { createClient } from '@supabase/supabase-js';
-// import { AttractionDetail, UMKM } from '../types';
-// import { initialContent } from '../content';
-
-// /**
-//  * ============================================================
-//  * 🛠️ KONFIGURASI DATABASE SUPABASE (GO LIVE)
-//  * ============================================================
-//  */
-// const SUPABASE_URL = 'https://iedvynwjbxqnmuoaghza.supabase.co'; 
-// const SUPABASE_ANON_KEY = 'sb_publishable_R60kdpUqUMui8qzZLmj8Fw_7k5kPsZH';
-
-// const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('YOUR_PROJECT_ID');
-
-// export const supabase = isConfigured 
-//   ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-//   : null;
-
-// export interface MigratoryBird {
-//   id: string;
-//   name: string;
-//   scientific: string;
-//   desc: string;
-//   image: string;
-//   status?: string;
-// }
-
-// export interface ContactConfig {
-//   phone: string;
-//   email: string;
-//   address: string;
-//   whatsappNumber: string;
-// }
-
-// const initialBirds: MigratoryBird[] = [
-//   {
-//     id: 'b1',
-//     name: 'Cerek Jawa',
-//     scientific: 'Charadrius javanicus',
-//     status: 'Endemik & Dilindungi',
-//     desc: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
-//     image: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
-//   }
-// ];
-
-// // Helper untuk LocalStorage
-// const getLocal = (key: string) => {
-//   const saved = localStorage.getItem(`banaran_${key}`);
-//   return saved ? JSON.parse(saved) : null;
-// };
-
-// const setLocal = (key: string, data: any) => {
-//   localStorage.setItem(`banaran_${key}`, JSON.stringify(data));
-// };
-
-// export const db = {
-//   isCloudEnabled: () => !!supabase,
-
-//   // Fungsi khusus untuk migrasi data dari lokal ke cloud agar sinkron di semua device
-//   syncLocalToCloud: async () => {
-//     if (!supabase) return { success: false, message: 'Kunci Supabase belum dikonfigurasi.' };
-
-//     try {
-//       const attractions = getLocal('attractions') || [];
-//       const umkm = getLocal('umkm') || [];
-//       const birds = getLocal('birds') || [];
-//       const contact = getLocal('contact');
-
-//       if (attractions.length > 0) await supabase.from('attractions').upsert(attractions);
-//       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
-//       if (birds.length > 0) await supabase.from('birds').upsert(birds);
-//       if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
-
-//       return { success: true, message: 'BERHASIL! Data sekarang telah diperbarui di semua perangkat pengunjung.' };
-//     } catch (error: any) {
-//       console.error('Sync Error:', error);
-//       return { success: false, message: 'Gagal Sinkron: ' + error.message };
-//     }
-//   },
-
-//   getContact: async (): Promise<ContactConfig> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('settings').select('*').single();
-//         if (!error && data) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('contact') || initialContent.contact;
-//   },
-  
-//   saveContact: async (contact: ContactConfig) => {
-//     setLocal('contact', contact);
-//     if (supabase) await supabase.from('settings').upsert({ id: 1, ...contact });
-//   },
-
-//   getAttractions: async (): Promise<AttractionDetail[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('attractions').select('*').order('created_at', { ascending: true });
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('attractions') || initialContent.attractions;
-//   },
-
-//   saveAttraction: async (attraction: AttractionDetail) => {
-//     const list = await db.getAttractions();
-//     const newList = list.some(a => a.id === attraction.id)
-//       ? list.map(a => a.id === attraction.id ? attraction : a)
-//       : [...list, attraction];
-//     setLocal('attractions', newList);
-//     if (supabase) await supabase.from('attractions').upsert(attraction);
-//   },
-
-//   deleteAttraction: async (id: string) => {
-//     const list = await db.getAttractions();
-//     setLocal('attractions', list.filter(a => a.id !== id));
-//     if (supabase) await supabase.from('attractions').delete().eq('id', id);
-//   },
-
-//   getUMKM: async (): Promise<UMKM[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('umkm').select('*').order('created_at', { ascending: true });
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('umkm') || initialContent.umkm;
-//   },
-
-//   saveUMKM: async (item: UMKM) => {
-//     const list = await db.getUMKM();
-//     const newList = list.some(u => u.id === item.id)
-//       ? list.map(u => u.id === item.id ? item : u)
-//       : [...list, item];
-//     setLocal('umkm', newList);
-//     if (supabase) await supabase.from('umkm').upsert(item);
-//   },
-
-//   deleteUMKM: async (id: string) => {
-//     const list = await db.getUMKM();
-//     setLocal('umkm', list.filter(u => u.id !== id));
-//     if (supabase) await supabase.from('umkm').delete().eq('id', id);
-//   },
-
-//   getBirds: async (): Promise<MigratoryBird[]> => {
-//     if (supabase) {
-//       try {
-//         const { data, error } = await supabase.from('birds').select('*').order('created_at', { ascending: true });
-//         if (!error && data && data.length > 0) return data;
-//       } catch (e) {}
-//     }
-//     return getLocal('birds') || initialBirds;
-//   },
-
-//   saveBird: async (bird: MigratoryBird) => {
-//     const list = await db.getBirds();
-//     const newList = list.some(b => b.id === bird.id)
-//       ? list.map(b => b.id === bird.id ? bird : b)
-//       : [...list, bird];
-//     setLocal('birds', newList);
-//     if (supabase) await supabase.from('birds').upsert(bird);
-//   },
-
-//   deleteBird: async (id: string) => {
-//     const list = await db.getBirds();
-//     setLocal('birds', list.filter(b => b.id !== id));
-//     if (supabase) await supabase.from('birds').delete().eq('id', id);
-//   }
-// };
-
-//---//
-
-
-// import { createClient } from '@supabase/supabase-js';
-// import { AttractionDetail, UMKM } from '../types';
-// import { initialContent } from '../content';
-
-// const SUPABASE_URL = 'https://iedvynwjbxqnmuoaghza.supabase.co'; 
-// const SUPABASE_ANON_KEY = 'sb_publishable_R60kdpUqUMui8qzZLmj8Fw_7k5kPsZH';
-
-// export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// export interface MigratoryBird {
-//   id: string;
-//   name: string;
-//   scientific: string;
-//   description: string; 
-//   image: string;       // Menggunakan 'image' sesuai kolom di database
-//   status?: string;
-// }
-
-// export interface ContactConfig {
-//   phone: string;
-//   email: string;
-//   address: string;
-//   whatsappNumber: string;
-// }
-
-// const initialBirds: MigratoryBird[] = [
-//   {
-//     id: 'b1',
-//     name: 'Cerek Jawa',
-//     scientific: 'Charadrius javanicus',
-//     status: 'Endemik & Dilindungi',
-//     description: 'Burung mungil penghuni tetap pesisir. Keberadaannya di Banaran menjadi indikator kesehatan ekosistem pantai pasir kita.',
-//     image: 'https://images.unsplash.com/photo-1612140402324-1188540c9c74?auto=format&fit=crop&q=80&w=600'
-//   }
-// ];
-
-// const getLocal = (key: string) => {
-//   const saved = localStorage.getItem(`banaran_${key}`);
-//   return saved ? JSON.parse(saved) : null;
-// };
-
-// const setLocal = (key: string, data: any) => {
-//   localStorage.setItem(`banaran_${key}`, JSON.stringify(data));
-// };
-
-// export const db = {
-//   isCloudEnabled: () => !!supabase,
-
-//   subscribe: (callback: () => void) => {
-//     const channel = supabase.channel('schema-db-changes')
-//       .on('postgres_changes', { event: '*', schema: 'public', table: 'attractions' }, () => callback())
-//       .on('postgres_changes', { event: '*', schema: 'public', table: 'umkm' }, () => callback())
-//       .on('postgres_changes', { event: '*', schema: 'public', table: 'birds' }, () => callback())
-//       .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => callback())
-//       .subscribe();
-    
-//     return () => {
-//       supabase.removeChannel(channel);
-//     };
-//   },
-
-//   syncLocalToCloud: async () => {
-//     try {
-//       const attractions = getLocal('attractions') || [];
-//       const umkm = getLocal('umkm') || [];
-//       const birds = getLocal('birds') || [];
-//       const contact = getLocal('contact');
-
-//       // Pastikan data yang dikirim ke cloud bersih dari kolom lama
-//       const cleanBirds = birds.map((b: any) => ({
-//         id: b.id,
-//         name: b.name,
-//         scientific: b.scientific,
-//         description: b.description || b.desc,
-//         image: b.image || b.imageUrl,
-//         status: b.status
-//       }));
-
-//       if (attractions.length > 0) await supabase.from('attractions').upsert(attractions);
-//       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
-//       if (cleanBirds.length > 0) await supabase.from('birds').upsert(cleanBirds);
-//       if (contact) await supabase.from('settings').upsert({ id: 1, ...contact });
-
-//       return { success: true, message: 'Sinkronisasi Berhasil!' };
-//     } catch (error: any) {
-//       return { success: false, message: 'Gagal Sinkron: ' + error.message };
-//     }
-//   },
-
-//   getContact: async (): Promise<ContactConfig> => {
-//     const { data, error } = await supabase.from('settings').select('*').single();
-//     if (!error && data) return data;
-//     return getLocal('contact') || initialContent.contact;
-//   },
-  
-//   saveContact: async (contact: ContactConfig) => {
-//     setLocal('contact', contact);
-//     await supabase.from('settings').upsert({ id: 1, ...contact });
-//   },
-
-//   getAttractions: async (): Promise<AttractionDetail[]> => {
-//     const { data, error } = await supabase.from('attractions').select('*').order('id', { ascending: true });
-//     if (!error && data && data.length > 0) return data;
-//     return getLocal('attractions') || initialContent.attractions;
-//   },
-
-//   saveAttraction: async (attraction: AttractionDetail) => {
-//     const { error } = await supabase.from('attractions').upsert(attraction);
-//     if (error) throw error;
-//     setLocal('attractions', await db.getAttractions());
-//   },
-
-//   deleteAttraction: async (id: string) => {
-//     await supabase.from('attractions').delete().eq('id', id);
-//     setLocal('attractions', await db.getAttractions());
-//   },
-
-//   getUMKM: async (): Promise<UMKM[]> => {
-//     const { data, error } = await supabase.from('umkm').select('*').order('id', { ascending: true });
-//     if (!error && data && data.length > 0) return data;
-//     return getLocal('umkm') || initialContent.umkm;
-//   },
-
-//   saveUMKM: async (item: UMKM) => {
-//     const { error } = await supabase.from('umkm').upsert(item);
-//     if (error) throw error;
-//     setLocal('umkm', await db.getUMKM());
-//   },
-
-//   deleteUMKM: async (id: string) => {
-//     await supabase.from('umkm').delete().eq('id', id);
-//     setLocal('umkm', await db.getUMKM());
-//   },
-
-//   getBirds: async (): Promise<MigratoryBird[]> => {
-//     const { data, error } = await supabase.from('birds').select('*').order('id', { ascending: true });
-//     if (!error && data && data.length > 0) return data;
-//     return getLocal('birds') || initialBirds;
-//   },
-
-//   saveBird: async (bird: MigratoryBird) => {
-//     // Pastikan payload bersih sebelum dikirim
-//     const payload = {
-//       id: bird.id,
-//       name: bird.name,
-//       scientific: bird.scientific,
-//       description: bird.description,
-//       image: bird.image,
-//       status: bird.status
-//     };
-//     const { error } = await supabase.from('birds').upsert(payload);
-//     if (error) throw error;
-//     setLocal('birds', await db.getBirds());
-//   },
-
-//   deleteBird: async (id: string) => {
-//     await supabase.from('birds').delete().eq('id', id);
-//     setLocal('birds', await db.getBirds());
-//   }
-// };
-
-
-
-
 import { createClient } from '@supabase/supabase-js';
-import { AttractionDetail, UMKM } from '../types';
+import { AttractionDetail, UMKM, CommunityActivity } from '../types';
 import { initialContent } from '../content';
 
 const SUPABASE_URL = 'https://iedvynwjbxqnmuoaghza.supabase.co'; 
@@ -584,6 +68,7 @@ export const db = {
       const attractions = getLocal('attractions') || [];
       const umkm = getLocal('umkm') || [];
       const birds = getLocal('birds') || [];
+      const activities = getLocal('activities') || [];
       const contact = getLocal('contact');
 
       const cleanBirds = birds.map((b: any) => ({
@@ -599,6 +84,23 @@ export const db = {
       if (umkm.length > 0) await supabase.from('umkm').upsert(umkm);
       if (cleanBirds.length > 0) await supabase.from('birds').upsert(cleanBirds);
       
+      if (activities.length > 0) {
+        const activityPayloads = activities.map((a: CommunityActivity) => ({
+          id: a.id,
+          title: a.title,
+          description: a.description,
+          imageUrl: a.imageUrl,
+          galleryImages: a.galleryImages,
+          bestTime: a.date,
+          category: 'ACTIVITY',
+          tagline: 'Community Activity',
+          fullDescription: a.description,
+          features: [],
+          tips: []
+        }));
+        await supabase.from('attractions').upsert(activityPayloads);
+      }
+
       if (contact) {
         await db.saveContact(contact);
       }
@@ -655,16 +157,17 @@ export const db = {
   },
 
   getAttractions: async (): Promise<AttractionDetail[]> => {
-    // Saring agar LOGO_ID tidak muncul di list wisata
+    // Saring agar LOGO_ID dan ACTIVITY tidak muncul di list wisata
     const { data, error } = await supabase
       .from('attractions')
       .select('*')
       .neq('id', LOGO_ID)
+      .neq('category', 'ACTIVITY')
       .order('id', { ascending: true });
 
     if (!error && data && data.length > 0) return data;
     const local = getLocal('attractions') || initialContent.attractions;
-    return local.filter((a: any) => a.id !== LOGO_ID);
+    return local.filter((a: any) => a.id !== LOGO_ID && a.category !== 'ACTIVITY');
   },
 
   saveAttraction: async (attraction: AttractionDetail) => {
@@ -718,6 +221,49 @@ export const db = {
   deleteBird: async (id: string) => {
     await supabase.from('birds').delete().eq('id', id);
     setLocal('birds', await db.getBirds());
+  },
+
+  getActivities: async (): Promise<CommunityActivity[]> => {
+    const { data, error } = await supabase
+      .from('attractions')
+      .select('*')
+      .eq('category', 'ACTIVITY')
+      .order('id', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      return data.map((d: any) => ({
+        id: d.id,
+        title: d.title,
+        description: d.description,
+        imageUrl: d.imageUrl,
+        galleryImages: d.galleryImages || [],
+        date: d.bestTime
+      }));
+    }
+    return getLocal('activities') || initialContent.activities;
+  },
+
+  saveActivity: async (activity: CommunityActivity) => {
+    const payload = {
+      id: activity.id,
+      title: activity.title,
+      description: activity.description,
+      imageUrl: activity.imageUrl,
+      galleryImages: activity.galleryImages,
+      bestTime: activity.date,
+      category: 'ACTIVITY',
+      tagline: 'Community Activity',
+      fullDescription: activity.description,
+      features: [],
+      tips: []
+    };
+    const { error } = await supabase.from('attractions').upsert(payload);
+    if (error) throw error;
+    setLocal('activities', await db.getActivities());
+  },
+
+  deleteActivity: async (id: string) => {
+    await supabase.from('attractions').delete().eq('id', id);
+    setLocal('activities', await db.getActivities());
   }
 };
-

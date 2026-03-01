@@ -27,3 +27,12 @@ export interface Message {
   role: 'user' | 'model';
   text: string;
 }
+
+export interface CommunityActivity {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  galleryImages: string[];
+  date?: string;
+}

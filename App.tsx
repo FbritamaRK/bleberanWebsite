@@ -12,18 +12,21 @@ import UMKMDetailView from './components/UMKMDetailView';
 import MangroveEducation from './components/MangroveEducation';
 import MangroveDetailView from './components/MangroveDetailView';
 import BirdMigration from './components/BirdMigration';
+import CommunityActivities from './components/CommunityActivities';
+import ActivityDetailView from './components/ActivityDetailView';
 import AdminDashboard from './components/AdminDashboard';
 import Login from './components/Login';
 import { db, MigratoryBird, ContactConfig } from './services/db';
-import { AttractionDetail, UMKM } from './types';
+import { AttractionDetail, UMKM, CommunityActivity } from './types';
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'detail' | 'admin' | 'login' | 'mangrove-detail' | 'umkm-detail'>('home');
+  const [view, setView] = useState<'home' | 'detail' | 'admin' | 'login' | 'mangrove-detail' | 'umkm-detail' | 'activity-detail'>('home');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   
   const [attractions, setAttractions] = useState<AttractionDetail[]>([]);
   const [umkmList, setUmkmList] = useState<UMKM[]>([]);
   const [birds, setBirds] = useState<MigratoryBird[]>([]);
+  const [activities, setActivities] = useState<CommunityActivity[]>([]);
   const [siteSettings, setSiteSettings] = useState<ContactConfig | null>(null);
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,16 +34,18 @@ export default function App() {
 
   const loadAllData = async () => {
     try {
-      const [attrData, umkmData, birdData, contactData] = await Promise.all([
+      const [attrData, umkmData, birdData, contactData, activityData] = await Promise.all([
         db.getAttractions(),
         db.getUMKM(),
         db.getBirds(),
-        db.getContact()
+        db.getContact(),
+        db.getActivities()
       ]);
       setAttractions(attrData);
       setUmkmList(umkmData);
       setBirds(birdData);
       setSiteSettings(contactData);
+      setActivities(activityData);
     } catch (error) {
       console.error("Load Data Error:", error);
     } finally {
@@ -70,6 +75,11 @@ export default function App() {
   const handleNavigateUmkmDetail = (id: string) => {
     setSelectedId(id);
     setView('umkm-detail');
+  };
+
+  const handleNavigateActivityDetail = (id: string) => {
+    setSelectedId(id);
+    setView('activity-detail');
   };
 
   const handleBackHome = async () => {
@@ -119,6 +129,13 @@ export default function App() {
     }
   }
 
+  if (view === 'activity-detail' && selectedId) {
+    const selectedData = activities.find(a => a.id === selectedId);
+    if (selectedData) {
+      return <ActivityDetailView data={selectedData} onBack={handleBackHome} />;
+    }
+  }
+
   if (view === 'mangrove-detail') {
     return <MangroveDetailView onBack={handleBackHome} />;
   }
@@ -132,9 +149,9 @@ export default function App() {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {[
-              { label: 'Area Konservasi', val: '2+', sub: 'Hektar Mangrove', color: 'bg-emerald-500 shadow-emerald-200' },
-              { label: 'Armada Kapal', val: '1+', sub: 'Wisata Air', color: 'bg-sky-500 shadow-sky-200' },
-              { label: 'Pengusaha Lokal', val: '10+', sub: 'UMKM Terdaftar', color: 'bg-orange-500 shadow-orange-200' },
+              { label: 'Area Konservasi', val: '12', sub: 'Hektar Mangrove', color: 'bg-emerald-500 shadow-emerald-200' },
+              { label: 'Armada Kapal', val: '15', sub: 'Wisata Air', color: 'bg-sky-500 shadow-sky-200' },
+              { label: 'Pengusaha Lokal', val: '50+', sub: 'UMKM Terdaftar', color: 'bg-orange-500 shadow-orange-200' },
               { label: 'Spesies Burung', val: '100+', sub: 'Kawasan KEE', color: 'bg-indigo-500 shadow-indigo-200' }
             ].map((s, i) => (
               <div key={i} className="flex flex-col items-center text-center">
@@ -165,6 +182,7 @@ export default function App() {
       )}
       
       <MangroveEducation onExploreDetail={() => setView('mangrove-detail')} />
+      <CommunityActivities activities={activities} onNavigateDetail={handleNavigateActivityDetail} />
       <LocationSection />
 
       <footer id="kontak" className="bg-slate-900 text-white py-24 relative overflow-hidden">
@@ -178,7 +196,7 @@ export default function App() {
                    <div className="w-14 h-14 bg-emerald-50 text-white rounded-2xl flex items-center justify-center font-black text-3xl">B</div>
                 )}
                 <div>
-                  <h5 className="text-3xl font-serif font-bold tracking-tight">Pesona Bleberan</h5>
+                  <h5 className="text-3xl font-serif font-bold tracking-tight">Pesona Banaran</h5>
                   <p className="text-emerald-400 text-[10px] font-black tracking-[0.4em] uppercase">Kawasan Ekosistem Esensial</p>
                 </div>
               </div>
