@@ -15,7 +15,7 @@ const CommunityActivities: React.FC<CommunityActivitiesProps> = ({ activities, o
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
-            <p className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.4em] mb-4">Kehidupan Lokal</p>
+            <p className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.4em] mb-4">Kegiatan Masyarakat</p>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 leading-tight">
               Kegiatan Masyarakat <span className="text-emerald-600">Dusun Bleberan</span>
             </h2>
