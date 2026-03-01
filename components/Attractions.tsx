@@ -23,7 +23,7 @@ const Attractions: React.FC<AttractionsProps> = ({ onNavigateDetail, attractions
         <div className="max-w-3xl mb-16 mx-auto text-center">
           <h2 id="wisata-title" className="text-orange-900 font-bold tracking-widest uppercase text-sm mb-3">Eksplorasi Destinasi</h2>
           <h3 className="text-4xl md:text-5xl font-serif text-slate-900 leading-tight">
-            Pengalaman Tak Terlupakan di <span className="text-emerald-700">Dusun Banaran</span>
+            Pengalaman Tak Terlupakan di <span className="text-emerald-700">Dusun Bleberan</span>
           </h3>
         </div>
         
