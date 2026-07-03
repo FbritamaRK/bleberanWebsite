@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Attractions from './components/Attractions';
@@ -142,6 +143,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-emerald-100 selection:text-emerald-900">
+      <Analytics />
       <Navbar onAdminAccess={handleAdminAccess} logoUrl={siteSettings?.logoUrl} />
       <Hero />
       
